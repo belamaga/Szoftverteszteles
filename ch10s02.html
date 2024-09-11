@@ -1,0 +1,102 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>10.2. TDD alapú adatbázis fejlesztés</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch10.html" title="10. fejezet - Adatbázisok tesztelése"><link rel="prev" href="ch10.html" title="10. fejezet - Adatbázisok tesztelése"><link rel="next" href="ch10s03.html" title="10.3. Adatbázis újratervezés folyamata"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.2. TDD alapú adatbázis fejlesztés</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch10.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">10. fejezet - Adatbázisok tesztelése</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch10s03.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="10.2. TDD alapú adatbázis fejlesztés"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e5491"></a>10.2. TDD alapú adatbázis fejlesztés</h2></div></div></div><p>Az adatbázisok világban is nagy szerepe van a tesztelés orientált fejlesztésnek, vagyis  a TDD (test driven development) módszertannak. A  TDD módszertan alapelvei a következ&#337;kben 
+                foglalhatók össze:</p><div class="sect2" title="10.2.1. Fokozatos adatmodellezés"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5496"></a>10.2.1. Fokozatos adatmodellezés</h3></div></div></div><p>A fokozatos modellezés szemlélete azt fejezi ki, hogy az adatbázis séma és védelmi, hatékonysági modelljét nem egy lépésben, a fejlesztés elején 
+                        alakítjuk ki, hanem menetközben több fázison keresztül finomodik a modell.  A tervezés els&#337; fázisában csak egy nagyvonalú terv áll rendelkezésre, amely tartalmazza a 
+                        f&#337; információ elemeket, de nem tér ki minden részletre. A projekt fejl&#337;dése során egyre finomabb kép alakul ki a követelményekr&#337;l és a modellezett területr&#337;l. Ezen finomítások 
+                        fokozatosan épülnek be az adatbázis modellbe.  A tervezés fontosabb lépései:
+                        </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>induló, els&#337;dleges követelmény modellezés</p></li><li class="listitem"><p>követelmények pontosítása</p></li><li class="listitem"><p>új modellelemek beolvasztása</p></li><li class="listitem"><p>kódolás</p></li><li class="listitem"><p>tesztelés</p></li><li class="listitem"><p>vissza a 2. pontra</p></li></ol></div><p>
+                           A fenti modell tehát egy folyamatos és fokozatos modell és program finomítást  és közelítést tartalmaz, ahol a tevékenységek fontos eleme az ismétl&#337;d&#337;, egyre 
+                           átfogóbb tesztek lefuttatása.
+                        </p><div class="figure"><a name="d0e5521"></a><p class="title"><b>10.1. ábra - A TDD alapú fejlesztés lépései</b></p><div class="figure-contents"><div class="mediaobject" align="center"><img src="https://gyires.inf.unideb.hu/KMITT/c12/images\abra_tdd.png" align="middle" alt="A TDD alapú fejlesztés lépései"></div></div></div><br class="figure-break"></div><div class="sect2" title="10.2.2. Visszirányú adatmodellezés"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5527"></a>10.2.2. Visszirányú adatmodellezés</h3></div></div></div><p>A visszirányú, regressziós tesztek szerepe, hogy az adatbázis séma módosítása után meggy&#337;z&#337;dhessünk arról. hogy a korábban megvalósított funkciók továbbra is 
+                        érvényesek, jól m&#369;ködnek.  A biztonság és min&#337;ség orientált fejlesztés alapelve, hogy ezen teszteket minden változás után lefuttassuk, tehát a tesztelés tulajdonképpen a 
+                        módosítás részévé válik. Ezen megközelítés egyik markáns képvisel&#337;je az el&#337;tesztel&#337; programozás (TFD, test first development), mely el&#337;írja, hogy a tesztek elkészítése legyen 
+                        az els&#337; lépés a fejlesztésben, mivel úgyis addig kell módosítani a modellen, amíg a kapcsolódó tesztek le nem futnak. A TFD alapú fejlesztés f&#337;bb lépései:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>induló teszt el&#337;állítása a kívánt funkcióhoz</p></li><li class="listitem"><p>a teszt futtatása; ha sikeres át lehet térni a következ&#337; funkcióra és így vissza az 1. pontra; ha nem sikerül továbblépés a 3. pontra</p></li><li class="listitem"><p>a modell módosítása egy kisebb, kezelhet&#337; mértékben</p></li><li class="listitem"><p>a teszt futtatása; ha sikeres át lehet térni a következ&#337; funkcióra és így vissza az 1. pontra; ha nem sikerül visszalépés a 3. pontra</p></li></ol></div><p>Az TFD megközelítés el&#337;nye, hogy a tervez&#337; jobban átgondolja a célokat, mélyebben feltáródnak az igényelt  változások jellegzetességei.  Az elkészített tesztek jobban 
+                            lokalizálódnak egy-egy problémakörre ezért alaposabban ellen&#337;rzés hajtódik végre. Természetesen ennek velejárója, hogy nagyobb feladatok fog jelenteni a tesztek 
+                            megírása és végrehajtása. További el&#337;nynek tekinthet&#337; az is, hogy a TFD megközelítésben a fejleszt&#337; hamarabb lezárhatja az egyes modulok fejlesztését, hiszen 
+                        hamarabb kap visszajelzést az elvégzett munka min&#337;ségér&#337;l.</p></div><div class="sect2" title="10.2.3. Verzió követés biztosítása"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5547"></a>10.2.3. Verzió követés biztosítása</h3></div></div></div><p>A fokozatos adatbázis fejlesztés során el&#337;fordulhat, hogy egy adott módosítás nagyon sikertelennek bizonyul. Ekkor célszer&#369;bb újra visszatérni ez el&#337;z&#337; érvényes, helyes 
+                        állapothoz, mint foltozgatni a már megírt módosításokat. A korábbi állapotokhoz történ&#337; visszatérés egyfajta verziókövetést igényel, hiszen meg&#337;rizzük a korábbi fejlesztési állapotokat. 
+                        Az adatbázis séma menedzsmentjének egyedi vonása, hogy  több elemet is le kell fednie. A verziókezelésbe  bevonandó elemek köre:</p><table border="0" summary="Simple list" class="simplelist"><tr><td>adatbázis objektumok (table, view, user,...) szerkezet leírása </td></tr><tr><td>védelmi  beállítások</td></tr><tr><td>integritási beállítások</td></tr><tr><td>adatbázis kódok (tárolt eljárás, trigger,..)</td></tr><tr><td>adatbázis paraméterek</td></tr></table><p>
+                         A fenti adatok két nagy forrásból szedhet&#337;k össze:
+                         </p><table border="0" summary="Simple list" class="simplelist"><tr><td>adatbázis metaadat táblák tartalma</td></tr><tr><td>küls&#337; konfigurációs állományok tartalma</td></tr></table><p>
+                           A piacon léteznek gyári megoldások, mint például az SVCO rendszer az Oracle 
+                           RDBMS-hez. Az SVCO rendszer egy teljesen PL/SQL kódban megírt verzió követ&#337; rendszer, amely az Oracle szerveren belül egy külön adatbázisban tárolja le a kijelölt 
+                           adatbázis sémáiban bekövetkez&#337; változásokat.   A verziókezelés természetesen történhet egyedi megoldással, az érintett leíró elemek másolásával és kimentésével. Az Oracle 
+                           esetében többtucat metaadat nézeti tábla áll rendelkezésre DBA hatáskörben a séma adatok kiolvasására. Néhány fontosabb sémaleíró tábla:                          
+                         </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>DBA_TABLES:  adatbázis táblák adatai</p></li><li class="listitem"><p>DBA_COLUMNS: adattábla mez&#337;k leírása</p></li><li class="listitem"><p>DBA_TAB_PRIVS: objektum jogok leírása</p></li><li class="listitem"><p>DBA_USERS: felhasználók adatai</p></li><li class="listitem"><p>DBA_CONSTRAINTS: megszorítások leírása</p></li><li class="listitem"><p>DBA_ROLES: szerepkörök adatai</p></li><li class="listitem"><p>DBA_PROCEDURES: tárolt eljárások adatai</p></li><li class="listitem"><p>DBA_SOURCE: tárolt eljárások kódjai</p></li></ul></div><p>A fenti metaadat állományok tartalmának kinyerésére több mód is kínálkozik:
+                        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>SELECT * FROM .. : tartalom közvetlen lekérdezése</p></li><li class="listitem"><p>COPY  FROM forrás_db TO cél_db  [CREATE | REPLACE] tábla    USING lekérdezés  : tábla átmásolása  </p></li><li class="listitem"><p>trigger kötése a tartalom  módosításához : CREATE TRIGGER AFTER UPDATE ON tábla FOR EACH ROW ..... A trigger törzsében lehet 
+                                szerepeltetni a tartalom kiolvasását és másolását végz&#337; utasításokat..</p></li><li class="listitem"><p>IMPORT segédprogram futtatása a magadott táblákra</p></li></ul></div><p>
+                            
+                        
+            </p><p>Az egyes adatbázis objektumok séma leírásakor hasznos információ a kapcsolódó jelentés magyarázat. Ehhez az Oracle-ben a 
+                        </p><pre class="programlisting">
+COMMENT ON objektum IS szöveg;                            
+                        </pre><p>
+                          SQL parancs használható.  A fenti parancs segítségével a jelentést magyarázó szöveget adhatunk a sémához. A megadott leírás a 
+                          </p><pre class="programlisting">
+SELECT COMMENTS  FROM  USER_TAB_COMMENTS WHERE ...;
+SELECT COMMENTS  FROM  USER_COL_COMMENTS WHERE ...;
+                          </pre><p>
+                            parancsokkal kérdezhet&#337;k le.
+                        </p></div><div class="sect2" title="10.2.4. Adatbázis homokozók, munkakörnyezetek biztosítása"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5621"></a>10.2.4. Adatbázis homokozók, munkakörnyezetek biztosítása</h3></div></div></div><p>A hagyományos szotfver fejlesztéshez hasonlóan az adatbázisok esetében is több fázisból áll a fejlesztés, úgymint tervezés, kódolás, tesztelés és bevezetés.  Ezen 
+                        fázisok eltér&#337; igényeket jelentenek az adatbázissal szemben, hiszen míg például a kódolás szakaszában még el&#337;fordulhatnak hibák (a hiba nélkül kódolás igen ritka jelenség), addig
+                        a bevezetésnél már nem szabadna hibákat tartalmaznia a rendszernek. A m&#369;köd&#337; rendszernél a stabilitás a legfontosabb,  a fejleszt&#337; rendszernél pedig a rugalmasság. Ezen 
+                        eltér&#337; követelmények miatt célszer&#369; az adatbázist is több példányban megvalósítani, az egyes munkacsoportoknak saját adatbázis környezetet biztosítani. Az ilyen egyedi igényeket
+                        kielégít&#337; adatbázis példányokat nevezik homokozóknak (sandbox). Az adatbázis fejlesztésnél az alábbi homokozó példányokat szokás megkülönböztetni:
+                        </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>fejleszt&#337;i környezet (development sandbox): </p></li><li class="listitem"><p>projekt integrációs környezet (project integration sandbox): </p></li><li class="listitem"><p>demonstrációs környezet (demo sandbox): </p></li><li class="listitem"><p>bevezetési teszt környezet (pre-production test sandbox):</p></li><li class="listitem"><p>üzemi, éles környezet (production)</p></li></ul></div><div class="figure"><a name="d0e5642"></a><p class="title"><b>10.2. ábra - Adatbázis változatok, homokozók</b></p><div class="figure-contents"><div class="mediaobject" align="center"><img src="https://gyires.inf.unideb.hu/KMITT/c12/images\abra_sandbox.png" align="middle" alt="Adatbázis változatok, homokozók"></div></div></div><br class="figure-break"><p>Az egyes példányok létrehozása történhet manuálisan, egyedi DBA parancsokkal is, A következ&#337;kben bemutatjuk az adatbázis másolás parancsait az Oracle DBMS példáján keresztül
+                            [Jeff Hunter, Sr. Database Administrator:  http://www.idevelopment.info/data/Oracle/DBA_tips/Backup_and_Recovery/BandR_2.shtml]
+                           </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Az adatbázis aktuális állományainak  számbavétele, majd másolása egy új helyre. Az állományokat az alábbi parancsokkal lehet felderíteni:
+                                        </p><table border="0" summary="Simple list" class="simplelist"><tr><td>select name from v$database;</td></tr><tr><td>select name from v$datafile;</td></tr></table><p>
+                               
+                     </p></li><li class="listitem"><p>�j inicializációs állomány készítése. Ehhez az INITx.ORA állományt kell átmásolni és új nevet adni. A inicializációs állományban az alábbi paramétereket 
+                               kell aktualizálni:
+                               </p><table border="0" summary="Simple list" class="simplelist"><tr><td>db_name</td></tr><tr><td>control_files</td></tr><tr><td>audit_file_dest</td></tr><tr><td>background_dump_dest</td></tr><tr><td>log_archive_dest</td></tr><tr><td>core_dump_dest</td></tr><tr><td>user_dump_dest</td></tr></table><p>
+                                   
+                               
+                     </p></li><li class="listitem"><p>Vezérl&#337; állományok létrehozatala. ehhez a forrás control file tartalmat kell átmásolni. Ehhez az alábbi SQL parancsot kell kiadni:
+                               </p><table border="0" summary="Simple list" class="simplelist"><tr><td>alter database backup controlfile to trace;</td></tr></table><p>
+                                   Ezt követ&#337;en az új vezérl&#337; állományt el&#337;állító SQL parancssort kell létrehozni. A parancssor szerkezete:
+                                   </p><pre class="programlisting">
+STARTUP NOMOUNT
+CREATE CONTROLFILE SET DATABASE "xxx" RESETLOGS NOARCHIVELOG
+    MAXLOGFILES xx
+    MAXLOGMEMBERS xx
+    MAXDATAFILES xx
+    MAXINSTANCES xx
+    MAXLOGHISTORY xx
+LOGFILE
+  GROUP 1 (
+    '/u03/app/oradata/xxx/redo_g01a.log',
+    '/u04/app/oradata/xxx/redo_g01b.log',
+    '/u05/app/oradata/xxx/redo_g01c.log'
+  ) SIZE 200K,
+  GROUP 2 (
+...
+) SIZE 200K,
+DATAFILE
+  '/u08/app/oradata/xxx/system01.dbf',
+  '/u06/app/oradata/xxx/rbs01.dbf',
+  '/u07/app/oradata/xxx/temp01.dbf',
+  '/u10/app/oradata/xxx/userd01.dbf',
+  '/u09/app/oradata/xxx/userx01.dbf';                                       
+                                   </pre><p>
+                                   
+                               
+                     </p><p>Ezt követ&#337;en lefuttatható DBA-ként az el&#337;bb elkészített parancssor.</p></li><li class="listitem"><p>A most létrehozásra el&#337;készített példány élesíthet&#337;, elindítható. A véglegesítés parancsai:
+                               </p><table border="0" summary="Simple list" class="simplelist"><tr><td>alter database recover database until cancel using backup controlfile;</td></tr><tr><td>alter database recover cancel;</td></tr><tr><td>alter database open resetlogs;</td></tr></table><p>
+                                   
+                               
+                     </p></li></ol></div><p>
+                             
+                        
+            </p><p>
+                            A teljes adatbázis séma átmásolásra DBMS-be épített segédprogramok 
+                            állnak rendelkezésre. Az Oracle esetében az EXPORT / IMPORT rutinokat lehet alkalmazni ezen célra.  Mindkét parancsnál egy külön parancsállományba szokás összefoglalni a 
+                            parancs paramétereket. A  mentés és betöltés több különböz&#337; üzemmódban futhat le:
+                             </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>teljes adatbázis átvitele</p></li><li class="listitem"><p>kijelölt felhasználó adatait vagy egyéb módon kijelölt objektumokat  érint csak a m&#369;velet</p></li><li class="listitem"><p>integritási elemek átvihet&#337;k vagy kihagyhatók</p></li><li class="listitem"><p>adattartalom átvitele vagy kihagyása (csak séma)</p></li><li class="listitem"><p>jogosultságai adatok átvitele vagy kihagyása</p></li></ul></div><p>
+                            Egy minta parancsindítást ad meg a következ&#337; parancs:
+                            </p><pre class="programlisting">
+ exp SYSTEM/password FULL=y FILE=dba.dmp LOG=dba.log CONSISTENT=y                               
+                            </pre><p>
+                        
+            </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch10.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch10.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch10s03.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">10. fejezet - Adatbázisok tesztelése&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;10.3. Adatbázis újratervezés folyamata</td></tr></table></div></body></html>

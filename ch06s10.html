@@ -1,0 +1,53 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>6.10. &#8222;Er&#337;forrás kimerítés&#8221; (Resource Depletion - Asymmetric resource consumption (amplification))</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch06.html" title="6. fejezet - Biztonsági tesztelés"><link rel="prev" href="ch06s09.html" title="6.9. &#8222;Protokol Manipuláció &#8211; http Válasz Elosztás&#8221; (Protocol Manipulation - Http Response Splitting)"><link rel="next" href="ch06s11.html" title="6.11. &#8222;Er&#337;forrás Manipuláció &#8211; Kémprogram&#8221; (Resource Manipulation &#8211; Spyware)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.10. 
+      
+            
+      
+            
+      
+            &#8222;Er&#337;forrás kimerítés&#8221; (Resource Depletion - Asymmetric resource consumption (amplification))</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s09.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">6. fejezet - Biztonsági tesztelés</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch06s11.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="6.10. &#8222;Er&#337;forrás kimerítés&#8221; (Resource Depletion - Asymmetric resource consumption (amplification))"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e3784"></a>6.10. 
+      
+            <a name="__RefHeading__17902_1902038280"></a>
+      
+            <a name="_Toc291181672"></a>
+      
+            <a name="Description21"></a>&#8222;Er&#337;forrás kimerítés&#8221; (Resource Depletion - Asymmetric resource consumption (amplification))</h2></div></div></div><div class="sect2" title="6.10.1. Leírás"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3793"></a>6.10.1. 
+      
+               <a name="__RefHeading__17904_1902038280"></a>
+      
+               <a name="_Toc291181673"></a>Leírás</h3></div></div></div><p>A támadó arra kényszeríti az áldozatot, hogy több er&#337;forrást használjon, mint amennyi a támadó hozzáférési szintjével engedélyezve van. A program valószín&#369;leg nem, vagy csak hibásan szabadítja föl a rendszer egy er&#337;forrását. Az er&#337;forrás nem lett rendesen kiürítve és el&#337;készítve az újbóli felhasználásra.</p></div><div class="sect2" title="6.10.2. PéLDáK"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3802"></a>6.10.2. 
+      
+               <a name="Examples19"></a>PéLDáK</h3></div></div></div><div class="sect3" title="6.10.2.1. Példa 1"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3807"></a>6.10.2.1. 
+      
+                  <a name="__RefHeading__17908_1902038280"></a>
+      
+                  <a name="_Toc291181675"></a>Példa 1</h4></div></div></div><p>A következ&#337; metódus sosem fogja bezárni a saját maga által megnyitott fájl kezel&#337;t/számlálót (file handle). The &nbsp;method for A StreamReader Finalize() metódusa végül meghívja a Close() metódust, de semmi sem tudja megmondani, hogy mennyi id&#337;be fog telni, miel&#337;tt a Finalize() m&#369;ködésbe lépne. Valójában semmi garancia nincs arra, hogy a Finalize() egyáltalán m&#369;ködésbe fog lépni. Egy terhelt környezetben ez azt eredményezheti, hogy a VM felhasználja az összes rendelkezésére álló fájl számlálót.</p><pre class="programlisting">
+  private void processFile(string fName) {
+  StreamWriter sw = new
+   &nbsp;StreamWriter(fName);
+   &nbsp;string line;
+   &nbsp;while ((line = sr.ReadLine())&nbsp;!= null) processLine(line);
+   }
+            </pre><p>Miután minden fájl számlálót (fájl leírót) felhasznált, a VM nagyon instabillá válhat, lelassulhat, vagy determinisztikusan megszakíthatja a m&#369;ködést a korábbi állapotához képest. </p></div><div class="sect3" title="6.10.2.2. Példa 2"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3820"></a>6.10.2.2. 
+      
+                  <a name="__RefHeading__17910_1902038280"></a>
+      
+                  <a name="_Toc291181676"></a>
+      
+                  <a name="Example_25"></a>Példa 2</h4></div></div></div><p>Normál körülmények között az alábbi C# kód egy adatbázis lekérdezést hajt végre, feldolgozza a az adatbázis által adott eredményt és bezárja a hozzá társított SqlConnection objektumot. De ha egy kivétel történik az SQL vagy az eredmények feldolgozása közben, akkor az SqlConnection objektum fog bezáródni. Ha ez elég sokszor megtörténik, akkor az adatbázis ki fog futni a rendelkezésére álló kurzorokból és nem fog tudni több SQL lekérdezést végrehajtani.</p><p>C# példa:</p><pre class="programlisting">
+      ...
+   SqlConnection conn = new SqlConnection(connString);
+   SqlCommand cmd = new SqlCommand(queryString);
+   cmd.Connection = conn; conn.Open();
+   SqlDataReader rdr = cmd.ExecuteReader();
+   HarvestResults(rdr);
+   conn.Connection.Close();
+   ...
+</pre><p>Az adatbázishoz kapcsolódó egybees&#337; kapcsolatok száma gyakran alacsonyabb, mint a rendszer által maximálisan használható számlálók száma. Ez megkönnyíti az alkalmazások sz&#369;k keresztmetszetének a megtalálását és a felhasználásukat arra, hogy leállítsuk instabillá tegyük az alkalmazás m&#369;ködését.</p></div><div class="sect3" title="6.10.2.3. Példa 3"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3837"></a>6.10.2.3. 
+      
+                  <a name="Example_32"></a>Példa 3</h4></div></div></div><p>Ha az N egybees&#337; kapcsolatot kezelni tudó alkalmazásba nincsenek beépítve megfelel&#337; mechanizmusok a kliensek leválasztására (például id&#337;korlátok (TIMEOUT)), akkor nagyon könnyen m&#369;ködésképtelenné tehet&#337; úgy, hogy N-hez közeli számú kapcsolatot hozunk létre. Ráadásképpen ezek a kapcsolatok munkát is szimulálnak az alkalmazással, addig használva a protokolljait, amíg föl nem emésztenek minden rendelkezésre álló er&#337;forrást.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s09.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch06s11.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">6.9. 
+      
+            &#8222;Protokol Manipuláció &#8211; http Válasz Elosztás&#8221; (Protocol Manipulation - Http Response Splitting)&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;6.11. 
+      
+            &#8222;Er&#337;forrás Manipuláció &#8211; Kémprogram&#8221; (Resource Manipulation &#8211; Spyware)</td></tr></table></div></body></html>

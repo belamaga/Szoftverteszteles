@@ -1,0 +1,134 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>3.2. Statikus elemzés</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch03.html" title="3. fejezet - Statikus tesztelési technikák"><link rel="prev" href="ch03.html" title="3. fejezet - Statikus tesztelési technikák"><link rel="next" href="ch04.html" title="4. fejezet - Teszt tervezési technikák"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.2. 
+      
+            Statikus elemzés</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch03.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">3. fejezet - Statikus tesztelési technikák</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch04.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="3.2. Statikus elemzés"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e1381"></a>3.2. 
+      
+            <a name="__RefHeading__3519_600791787"></a>Statikus elemzés</h2></div></div></div><p>A statikus elemzés fehérdobozos teszt, hiszen szükséges hozzá a forráskód. Néhány esetben, pl. holtpont ellen&#337;rzés, elegend&#337; a lefordított köztes kód (byte kód). A statikus elemzés azért hasznos, mert olyan hibákat fedez fel, amiket más tesztelési eljárással nehéz megtalálni. Például kisz&#369;rhet&#337; segítségével minden null referencia hivatkozás, ami az alkalmazás lefagyásához vezethet, ha benne marad a programban. Az összes null referencia hivatkozás kisz&#369;rése dinamikus technikákkal (pl. komponens teszttel vagy rendszerteszttel) nagyon sok id&#337;be telne, mert 100%-os kódlefedettséget kellene elérnünk.</p><p>A statikus elemzés azt használja ki, hogy az ilyen tipikus hibák leírhatók egyszer&#369; szabályokkal, amiket egy egyszer&#369; kódelemz&#337; (parser) gyorsan tud elemezni. Például null referencia hivatkozás akkor lehetséges, ha egy &#8222;a = null;&#8221; értékadó utasítás és egy &#8222;a.akármi;&#8221; hivatkozás közt van olyan végrehajtási út, ahol az &#8222;a&#8221; referencia nem kap null-tól különböz&#337; értéket. Ugyan ezt lehet dinamikus technikákkal is vizsgálni, de ahhoz annyi tesztesetet kell fejleszteni, ami minden lehetséges végrehajtási utat tesztel az &#8222;a = null;&#8221; és az &#8222;a.akármi;&#8221; közt.</p><p>A forráskód statikus elemzésnek két változata ismert, ezek:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>statikus elemzés csak a forráskód alapján,</p></li><li class="listitem"><p>statikus elemzés a forráskód és modell alapján.</p></li></ol></div><p>Ezen túl lehetséges a dokumentumok statikus elemzése is, de ezekre nem térünk ki.</p><p>A következ&#337; hiba típusokat könnyebb statikus elemzéssel megtalálni, mint más technikákkal:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>null referenciára hivatkozás,</p></li><li class="listitem"><p>tömbök túl vagy alul indexelése,</p></li><li class="listitem"><p>nullával való osztás,</p></li><li class="listitem"><p>lezáratlan adat folyam (unclosed stream),</p></li><li class="listitem"><p>holtpontok (deadlock),</p></li><li class="listitem"><p>kiéheztetés (starvation).</p></li></ol></div><p>Az egyes eszközök lehetnek specifikusak, mint pl. a holtpont keres&#337;k, illetve általánosak, mint pl. a FindBugs.</p><div class="sect2" title="3.2.1. Statikus elemzés csak a forráskód alapján"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1424"></a>3.2.1. 
+      
+               <a name="__RefHeading__3521_600791787"></a>Statikus elemzés csak a forráskód alapján</h3></div></div></div><p>Azok az elemz&#337;k, amelyek csak a forráskódot használják fel az elemzéshez, azok nagyon hasznosak olyan szempontból, hogy nem igényelnek plusz er&#337;feszítést a programozóktól a specifikáció megírásához. Ilyen eszköz például a FindBugs. Ezeket az eszközöket csak bele kell illeszteni a fordítás folyamatába. Ezután a statikus elemz&#337; felhívja a figyelmünket a tipikus programozói hibákra. Ezek általában programozási nyelv specifikusak, de léteznek nyelv függetlenek, pl. a Sonar vagy a Yasca rendszer, amelyek egy-egy plugin segítségével adaptálhatóak a kedvenc nyelvünkhöz.</p><p>Jelen jegyzetben a FindBugs használatát fogjuk bemutatni Eclipse környezetben. El&#337;ször telepíteni kell a FindBugs plugint. Ehhez indítsuk el az Eclipse rendszert, majd válasszuk a Help -&gt; Install New Software&#8230; menüt. A megjelen&#337; ablakban adjuk hozzá a plugin források listájához az alábbi linket az Add gombbal: <a class="ulink" href="http://findbugs.cs.umd.edu/eclipse" target="_top">http://findbugs.cs.umd.edu/eclipse</a>. Ezután néhány Next gomb és a felhasználási feltételek elfogadása után a rendszer elkezdi installálni a FindBugs plugint. Ez néhány percet vesz igénybe, ami után újraindul az Eclipse. Ezután már használhatjuk a FindBugs-t.</p><p>A használatához válasszunk ki egy projektet, majd a helyi menüben válasszuk a Find Bugs -&gt; Find Bugs menüt. Ez egyrészt megkeresi azokat a sorokat, amelyek valamilyen szabálynak nem felelnek meg, másrészt átvisz minket a FindBugs perspektívába. Ha talál hibákat, akkor ezeket bal oldalon egy kicsi piros bogár ikonnal jelzi. Ha ezekre ráállunk vagy rákattintunk, akkor láthatjuk, milyen típusú hibát találtunk. Ezekr&#337;l részletes információt is kérhetünk, ha a FindBugs perspektíva Bug Explorer ablakában kiválasztjuk valamelyiket.</p><p>Az egyes hibák ellen&#337;rzését ki/be lehet kapcsolni a projekt Properties ablakának FindBugs panelén. Itt érdemes a Run atomatically opciót bekapcsolni. így minden egyes mentésnél lefut a FindBugs. Ebben az ablakban az is látható, melyik hiba ellen&#337;rzése gyors, illetve melyik lassú. Például a null referenciára hivatkozás ellen&#337;rzése lassú.</p><p>Nézzünk néhány gyakori hibát, amit megtalál a FindBugs az alapbeállításaival:</p><pre class="programlisting">
+   public int fact(int n) { return n*fact(n-1); }
+       </pre><p>Itt a &#8222;There is an apparent infinite recursive loop&#8221; figyelmeztetést kapjuk nagyon helyesen, hiszen itt egy rekurzív függvényt írtunk bázis feltétel nélkül, és így semmi se állítja meg a rekurziót.</p><pre class="programlisting">
+  Integer i = 1, j = 0;
+  if(i == j) System.out.println("ugyanaz");
+         </pre><p>Ebben a példában a &#8222;Suspicious comparison of Integer references&#8221; figyelmeztetést kapjuk. Ez azért van, mert referenciák egyenl&#337;ségét ugyan tényleg a dupla egyenl&#337;ségjellel kell vizsgálni, de a mögöttük lév&#337; tartalom egyenl&#337;ségét az equals metódussal kell megvizsgálni. Tehát ez egy lehetséges hiba, amit érdemes a fejleszt&#337;knek alaposan megnézni.</p><pre class="programlisting">
+ int i = 0;
+ i = i++;
+ System.out.println(i);
+</pre><p>Itt több hibát is kapunk: &#8222;Overwritten increment&#8221; és &#8222;Self assignment of local variable&#8221;. Az els&#337; hiba arra utal, hogy hiába akartuk növelni az i változó értékét, az elvész. A második hiba azt fejezi ki, hogy egy változót önmagával akarunk felülírni.</p><p>Nézzünk olyan esetet is, aminél hibásan ad figyelmeztetést a FindBugs:</p><pre class="programlisting">
+ public static void main(String[] args){
+ Object o = null;
+ &nbsp; &nbsp; &nbsp; &nbsp; int i = 1;
+  &nbsp; &nbsp; &nbsp; if(i == 1) o = "hello";
+  &nbsp; &nbsp; &nbsp; System.out.println(o.toString());
+ }
+</pre><p>A fenti esetre a &#8222;Possible null pointer dereference of o&#8221; hibát kapjuk, habár egyértelm&#369;en látszik, hogy az o értéket fog kapni, hiszen igaz az if utasítás feltétele. Ugyanakkor a FindBugs rendszer nem képes kiszámolni a változók lehetséges értékeit az egyes ágakon, hiszen nem tartalmaz egy automatikus tételbizonyítót. Ezzel szemben a következ&#337; alfejezetben tárgyalt ESC/Java2 eszköz képes erre, hiszen egy automatikus tételbizonyítóra épül.</p></div><div class="sect2" title="3.2.2. Statikus elemzés a forráskód és modell alapján"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1460"></a>3.2.2. 
+      
+               <a name="__RefHeading__3523_600791787"></a>Statikus elemzés a forráskód és modell alapján</h3></div></div></div><p>Ebben az esetben a forráskód mellett van egy modellünk is, ami leírja, hogyan kellene m&#369;ködnie a programnak. A program viselkedése ilyen esetben el&#337;- és utófeltételekkel, illetve invariánsokkal van leírva. Ezt úgy érjük el legkönnyebben, hogy kontraktus alapú tervezést (design by contract) használunk. Ez esetben minden metódusnak van egy kontraktusa, amely a metódus el&#337;- és utófeltételében ölt testet. A szerz&#337;dés kimondja, hogy ha a metódus hívása el&#337;tt igaz az el&#337;feltétele, akkor a metódus lefutása után igaznak kell lennie az utófeltételének. Az invariánsok általában osztály szint&#369;ek, leírják az osztály lehetséges bels&#337; állapotait. A program viselkedését legegyszer&#369;bben assert utasításokkal írhatjuk le.</p><p>Egy példa assert használatára:</p><pre class="programlisting">
+  public double division(double a, double b){
+   &nbsp; &nbsp; &nbsp; assert(b!=0.0);
+  &nbsp; &nbsp; &nbsp; &nbsp; return a / b;
+  }
+</pre><p>A fenti példában azt feltételezzük, hogy a metódus második paramétere nem nulla. A program kódjában a feltételezéseinket assert formájában tudjuk beírni Java esetén. Java esetén az assert utasítások csak akkor futnak le, ha a JVM-et a &#8211;enableassert vagy az egyenérték&#369; &#8211;ea opcióval futtatjuk, egyébként nincs hatásuk.</p><p>C# esetén a fenti példa megfelel&#337;je ez:</p><pre class="programlisting">
+  public double division(double a, double b)
+  {
+  System.Diagnostics.Debug.Assert(b != 0.0);
+  &nbsp; &nbsp; &nbsp; return a / b;
+  }
+</pre><p>Az Assert csak akkor fog lefutni, ha a Debug módban fordítjuk az alkalmazást.</p><p>A program viselkedését legegyszer&#369;bben assert utasítások lehet leírni, de lehet&#337;ségünk van magas szint&#369; viselkedés leíró nyelvek használatára, mint például a JML (Java Modeling Language) nyelv. Ez esetben magas szint&#369; statikus kód ellen&#337;rzést (Extended Static Checking, ESC) tudunk végezni az ESC/Java2 program segítségével.</p><p>Egy példa JML használatára:</p><pre class="programlisting">
+   public class BankSzámla {
+    &nbsp; &nbsp; &nbsp; private /*@ spec_public @*/ int balansz = 0;
+   &nbsp; &nbsp; &nbsp; &nbsp; private /*@ spec_public @*/ boolean zárolt = false; 
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ public invariant balansz &gt;= 0;&nbsp; &nbsp; &nbsp; &nbsp; 
+     &nbsp; &nbsp; &nbsp; //@ requires 0 &lt; összeg;
+     &nbsp; &nbsp; &nbsp; //@ assignable balansz;
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ ensures balansz == \old(balansz) + összeg;
+   &nbsp; &nbsp; &nbsp; &nbsp; public void betesz(int összeg) { balansz += összeg; }
+   
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ requires 0 &lt; összeg &amp;&amp; összeg &lt;= balansz;
+     &nbsp; &nbsp; &nbsp; //@ assignable balansz;
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ ensures balansz == \old(balansz) - összeg;
+   &nbsp; &nbsp; &nbsp; &nbsp; public void kivesz(int összeg) { balansz -= összeg; }
+   
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ assignable zárolt;
+    &nbsp; &nbsp; &nbsp; //@ ensures zárolt == true;
+   &nbsp; &nbsp; &nbsp; &nbsp; public void zárol() { zárolt = true; }
+   
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ &nbsp; requires !zárolt;
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ &nbsp; ensures \result == balansz;
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ also
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ &nbsp; requires zárolt;
+   &nbsp; &nbsp; &nbsp; &nbsp; //@ &nbsp; signals_only BíankingException;
+   &nbsp; &nbsp; &nbsp; &nbsp; public /*@ pure @*/ int getBalansz() throws BankingException {
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (!zárolt) { return balansz; }
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else { throw new BankingException("Zárolt a számla"); }
+   &nbsp; &nbsp; &nbsp; &nbsp; }
+   }
+</pre><p>Ebb&#337;l a kis példából lehet látni, hogy a JML specifikációt megjegyzésbe kell írni, amely az @ jellel kezd&#337;dik. A spec_public kulcsszóval teszünk láthatóvá egy mez&#337;t a JML specifikáció számára. Az invariant kulcsszó után adjuk meg az osztály invariánsát, amelynek minden (nem helper) metódus hívás el&#337;tt és után igaznak kell lennie. Az el&#337;feltételt a requires kulcsszó után kell írni. Maga a feltétel egy szabályos Java logikai kifejezés. A kifejezésben lehet használni JML predikátumokat is. Az utófeltétel kulcsszava az ensures. Lehet látni, hogy az utófeltételben lehet hivatkozni a visszatérési értékre a \result JML kifejezéssel. Az \old(x) JML kifejezés az x változó metódus futása el&#337;tti értékére hivatkozik. Az assignable kulcsszó segítségével úgynevezett keretfeltétel (frame condition) adható, amiben felsorolhatom, hogy a metóduson belül mely mez&#337;k értékét lehet megváltoztatni. Ha egyik mez&#337; értékét sem változtathatja meg a metódus, akkor azt mondjuk, hogy nincs mellékhatása. Az ilyen metódusokat a pure kulcsszóval jelöljük meg. El&#337;- és utófeltételben csak pure metódusok hívhatok. Az also kulcsszó esetszétválogatásra szolgál. A signals_only kulcsszó után adható meg, hogy milyen kivételt válthat ki a metódus. </p><p></p><p>Az fenti példában van egy BankSzámla osztályunk, amelyben a balansz mez&#337; tárolja, hogy mennyi pénzünk van. Az invariánsunk az fejezi ki, hogy a balansz nem lehet negatív. Négy metódusunk van. A metódusoknál megadjuk el&#337;- és utófeltételüket természetes nyelven:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>betesz(összeg)</p></li><li class="listitem"><p>El&#337;feltétel: Az összeg pozitív szám, mert nulla forintot nincs értelme betenni, negatív összeget pedig nem szabad.</p></li><li class="listitem"><p>Keret feltétel: Csak a balansz mez&#337;t írhatja.</p></li><li class="listitem"><p>Utófeltétel: A balanszot meg kell növelni az összeggel, azaz az új balansz a régi balansz plusz az összeg.</p></li><li class="listitem"><p>kivesz(összeg)</p></li><li class="listitem"><p>El&#337;feltétel: Az összeg pozitív szám, mert nulla forintot nincs értelme kivenni, negatív összeget pedig nem szabad. Továbbá az összeg kisebb egyenl&#337;, mint a balansz, mert a számlán lév&#337; összegnél nem lehet többet felvenni.</p></li><li class="listitem"><p>Keret feltétel: Csak a balansz mez&#337;t írhatja.</p></li><li class="listitem"><p>Utófeltétel: A balanszot csökkenteni kell az összeggel, azaz az új balansz a régi balansz mínusz az összeg.</p></li><li class="listitem"><p>zárol()</p></li><li class="listitem"><p>El&#337;feltétel: Nincs, azaz mindig igaz.</p></li><li class="listitem"><p>Keret feltétel: Csak a zárolt mez&#337;t írhatja.</p></li><li class="listitem"><p>Utófeltétel: A zárolt mez&#337;nek igaznak kell lennie.</p></li><li class="listitem"><p>getBalansz()</p></li><li class="listitem"><p>Két esetet különböztetünk meg, ahol az el&#337;feltételek kizárják egymást.</p></li><li class="listitem"><p>El&#337;feltétel: A számla nem zárolt.</p></li><li class="listitem"><p>Utófeltétel: A visszatérési érték megegyezik a balansz értékével.</p></li><li class="listitem"><p>El&#337;feltétel: A számla zárolt.</p></li><li class="listitem"><p>Kivétel: Zárolt számla nem kérdezhet&#337; le, ezért BankingException kivételt kell dobni.</p></li><li class="listitem"><p>Keret feltétel: Mindkét esetben egyik mez&#337; sem írható, tehát ez a metódus &#8222;pure&#8221;.</p></li></ol></div><p></p><p>A JML nyelvhez több segédeszköz is létezik. Az els&#337; ilyen az Iowa State University JML program. Ez a következ&#337; részekb&#337;l áll:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>jml: JML szintaxis ellen&#337;rz&#337;</p></li><li class="listitem"><p>jmlc: Java és JML fordító, a Java forrásban lév&#337; JML specifikációt belefordítja a bájtkódba.</p></li><li class="listitem"><p>jmlrac: a jmlc által instrumentált bájtkódot futtató JVM, futtatás közben ellen&#337;rzi a specifikációt, tehát dinamikus ellen&#337;rzést végez.</p></li></ol></div><p>Nekünk a JML 5.4 és 5.5 verziót volt szerencsénk kipróbálni. Sajnos ezek csak a Java 1.4 verzióig támogatják a Java nyelvet. Nem ismerik például a paraméteres osztályokat. Ha simán hívjuk meg a jmlc parancsot, akkor rengeteg információt kiír, ami esetleg elfed egy hibát. Ezért érdemes a -Q vagy a -Quite opcióval együtt használni. A BankSzámla példát a következ&#337; utasításokkal lehet ellen&#337;rizni, hogy megfelel-e specifikációjának:</p><p>jmlc -Q BankSzámla.java</p><p>jmlrac BankSzámla</p><p>Persze ehhez a BankSzámla osztályba kell írni egy main metódust is, hiszen az a belépési pont.</p><p></p><p>Második példa:</p><pre class="programlisting">
+     //******* AbstractAccount.java *******  
+     package bank3;  
+     public abstract class AbstractAccount {  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ public model int balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ public invariant balance &gt;= 0;  
+  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ requires amount &gt; 0;  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ assignable balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ ensures balance == \old(balance + amount);  
+     &nbsp; &nbsp; &nbsp; &nbsp; public abstract void credit(int amount);&nbsp; &nbsp; &nbsp; &nbsp;   
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ requires 0 &lt; amount &amp;&amp; amount &lt;= balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ assignable balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ ensures balance == \old(balance) - amount;  
+     &nbsp; &nbsp; &nbsp; &nbsp; public abstract void debit(int amount);  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ &nbsp; ensures \result == balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; public abstract /*@ pure @*/ int getBalance();  
+     }  
+     //******* Account.java *******  
+     package bank3;  
+     public class Account extends AbstractAccount{&nbsp; &nbsp; &nbsp; &nbsp;   
+     &nbsp; &nbsp; &nbsp; &nbsp; private /*@ spec_public @*/ int balance = 0; //@ in super.balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; //@ private represents super.balance = balance;  
+     &nbsp; &nbsp; &nbsp; &nbsp; public void credit(int amount) { balance += amount; }  
+     &nbsp; &nbsp; &nbsp; &nbsp; public void debit(int amount) { balance -= amount; }  
+     &nbsp; &nbsp; &nbsp; &nbsp; public int getBalance() { return balance; }  
+     }  
+            </pre><p>Ez a példa azt mutatja meg, hogyan lehet már az interfészben vagy az absztrakt &#337;s osztályban specifikálni az elvárt viselkedést. Ehhez egy modell mez&#337;t kell definiálni az &#337;sben (vagy az interfészben) a &#8222;model&#8221; kulcsszóval. A konkrét gyermekben az &#337;sben specifikált viselkedést meg kell valósítani. Ehhez meg kell mondani, hogy melyik konkrét mez&#337; valósítja meg a modell mez&#337;t. Ez a &nbsp;&#8222;represents&#8221; kulcsszó használatával lehetséges.</p><p>A fenti példát a következ&#337; utasításokkal lehet ellen&#337;rizni:</p><p>&nbsp;jmlc -Q bank3/*.java</p><p>jmlrac bank3.Account</p><p>Persze ehhez a Account osztályba kell írni egy main metódust is, hiszen az a belépési pont.</p><p>Harmadik példa:  </p><pre class="programlisting">
+              //******* Timer.java *******  
+     package bank4;  
+     public interface Timer{  
+     &nbsp; //@ public instance model int ticks;  
+     &nbsp; //@ public invariant ticks &gt;= 0;  
+     &nbsp; //@ assignable this.ticks;  
+     &nbsp; //@ ensures this.ticks == ticks;  
+     &nbsp; void setTimer(int ticks);  
+     }  
+     //******* Dish.java *******  
+     package bank4;  
+     public class Dish implements Timer{  
+     &nbsp; private /*@ spec_public @*/ int timer; //@ in ticks;  
+     &nbsp; //@ private represents ticks = timer;  
+     &nbsp; public void setTimer(int timer) { this.timer = timer;}  
+     }  
+            </pre><p>Ez a példa azt mutatja meg, hogyan kell modell mez&#337;t létrehozni az interfészben. Mindent ugyanúgy kell csinálni, csak a &#8222;model&#8221; kulcsszó elé be kell írni az &#8222;instance&#8221; kulcsszót, ami azt fejezi ki, hogy a modell változó példány szint&#369;. Erre azért van szükség, mert egyébként Javában minden interfész mez&#337; statikus.</p><p>Láttuk, hogy a specifikáció dinamikus ellen&#337;rizhet&#337; az Iowa State University JML programmal. Szerencsére lehetséges a statikus ellen&#337;rzés is az ESC/Java2 programmal.</p><p></p><p>Az ESC/Java2 (Extended Static Checker for Java2) egy olyan segédeszköz, amely ellen&#337;rizni tudja, hogy a Java forrás megfelel-e a JML specifikációnak. Az ESC/Java2 hasonlóan a FindBugs programhoz figyelmezteti a programozót, ha null referenciára hivatkozik, vagy más gyakori programozói hibát vét. Erre akkor is képes, ha egy JML sor specifikációt se írunk. Nyilván, ha kiegészítjük a kódunkat JML specifikációval, akkor sokkal hasznosabban tudjuk használni.</p><p>Az ESC/Java2 program is csak a Java 1.4 verziójáig támogatja a Java nyelvet. Ez is telepíthet&#337; Eclipse pluginként a <a class="ulink" href="http://kind.ucd.ie/products/opensource/Mobius/updates/" target="_top">http://kind.ucd.ie/products/opensource/Mobius/updates/</a> címr&#337;l.</p><p>Miután feltelepítettük két új perspektívát kapunk, a Validation és a Verification nev&#369;t. Az els&#337;ben 3 új gombban b&#337;vül a menüsor alatti eszköztár. Ezek a következ&#337;ek: JML, JMLC, és a JMLRAC gomb, amelyek az azonos nev&#369; segédprogramot hívják az Iowa State University JML programcsomagból.</p><p>A második perspektívában 5 új gombot kapunk. Ezek közül a legfontosabb az els&#337;, amely elindjtja a ESC/Java2 ellen&#337;rz&#337; programot. A többi gomb balról jobbra haladva a következ&#337;k: jelöl&#337;k (jelöl&#337;knek nevezzük a hiba helyét jelöl&#337; piros ikszet) törlése, ugrás jelöl&#337;re, ellenörzés engedélyezése, ellen&#337;rzés tiltása. Ezeket nem találtuk különösebben hasznosnak. Ami hasznos volt számunkra az az ESC/Java2 menüben található Setup menü. Itt lehet bekapcsolni az automatikus ellen&#337;rzést, aminek hatására minden egyes mentés után lefut az ESC/Java2.</p><p>Nézzünk egy egyszer&#369; példát, amikor JML specifikáció nélkül is hibát fedez fel a kódunkban az ESC/Java2.</p><pre class="programlisting">
+   package probe;
+   public abstract class Decorator extends Car {
+   &nbsp; &nbsp; &nbsp; &nbsp; Car target;
+   &nbsp; &nbsp; &nbsp; &nbsp; public int getSpeed(){
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return target.getSpeed();
+   &nbsp; &nbsp; &nbsp; &nbsp; }
+            </pre><p>Itt az ötödik sorra azt a hibát kapjuk, hogy &#8222;Possible null dereference (Null)&#8221;. Ez a figyelmeztetés teljesen jogos, segíti a programozót kijavítani egy hibát.</p><p>Nézzük meg azt a példát, amivel a FindBugs nem boldogult:</p><pre class="programlisting">
+  public static void main(String[] args){
+   Object o = null;
+   &nbsp; &nbsp; &nbsp; &nbsp; int i = 1;
+   &nbsp; &nbsp; &nbsp; &nbsp; if(i == 1) o = "hello";
+   &nbsp; &nbsp; &nbsp; &nbsp; System.out.println(o.toString());
+   }
+</pre><p>Erre az ESC/Java2 semmilyen hibát nem ad. Ez azért lehetséges, mert mögötte egy automatikus tételbizonyító áll, ami meg tudja nézni, hogy valamely feltétel igaz vagy sem az egyes lehetséges végrehajtási utakon.</p><p>Ugyanakkor a ESC/Java2-höz adott Simplify nev&#369; automatikus tételbizonyító nem túl okos. Például nem tudja, hogy két pozitív szám szorzata pozitív, ezért ad hibát a következ&#337; példára:</p><pre class="programlisting">
+     public class Main {  
+     &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; //@ requires n&gt;=0;  
+     &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; //@ ensures \result &gt; 0;  
+     &nbsp; &nbsp; &nbsp; &nbsp; public int fact(int n){  
+     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (n==0) return 1;  
+     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return n*fact(n-1);  
+     &nbsp; &nbsp; &nbsp; &nbsp; }  
+     }  
+            </pre><p>Itt az ESC\Java2 hibásan a &#8222;Postcondition possibly not established (Post)&#8221; figyelmeztetést adja, pedig a függvény tökéletesen betartja az utófeltételét. Szerencsére az ESC\Java2 alatt kicserélhet&#337; az automatikus tételbizonyító.</p><p></p><p></p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch03.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch04.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">3. fejezet - Statikus tesztelési technikák&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;4. fejezet - Teszt tervezési technikák</td></tr></table></div></body></html>

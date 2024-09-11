@@ -1,0 +1,75 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>6.8. &#8222;Próbálgatásos technikák &#8211; Nyers Er&#337; támadás&#8221; (Probabilistic Techniques - Brute force attack)</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch06.html" title="6. fejezet - Biztonsági tesztelés"><link rel="prev" href="ch06s07.html" title="6.7. &#8222;�tkeresztezési támadás&#8221; (Path Traversal Attack)"><link rel="next" href="ch06s09.html" title="6.9. &#8222;Protokol Manipuláció &#8211; http Válasz Elosztás&#8221; (Protocol Manipulation - Http Response Splitting)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.8. 
+      
+            &#8222;Próbálgatásos technikák &#8211; Nyers Er&#337; támadás&#8221; (Probabilistic Techniques - Brute force attack)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s07.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">6. fejezet - Biztonsági tesztelés</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch06s09.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="6.8. &#8222;Próbálgatásos technikák &#8211; Nyers Er&#337; támadás&#8221; (Probabilistic Techniques - Brute force attack)"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e3606"></a>6.8. 
+      
+            <a name="Description15"></a>&#8222;Próbálgatásos technikák &#8211; Nyers Er&#337; támadás&#8221; (Probabilistic Techniques - Brute force attack)</h2></div></div></div><div class="sect2" title="6.8.1. Leírás"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3611"></a>6.8.1. 
+      
+               <a name="_Toc291181667"></a>Leírás</h3></div></div></div><p>Ezzel a fajta támadással a behatoló megpróbálja úgy megkerülni a biztonsági mechanizmusokat, hogy nagyon kevés információval rendelkezik róluk. A következ&#337; módok valamelyikét használhatja:</p><p>könyvtár támadás (mutációkkal vagy anélkül) (dictionary attack (with or without mutations))</p><p>nyers-er&#337; támadás (megadott csoportú karakterekkel, például: alfanumerikus, különleges, &#8222;case-sensitive&#8221;) (brute-force attack )</p><p>A támadó megpróbálja elérni a célját. A megfelel&#337; paraméterek (egy bizonyos módszer, a próbálkozások száma, a rendszer hatékonysága) figyelembe vételével, amik levezénylik a támadást a behatoló megjósolhatja, hogy meddig kell tartania a támadásnak. A nem nyers-er&#337; támadások (non brute-force attacks), amikben mindenféle karakter szerepel, nem kecsegtetnek biztos sikerrel.</p></div><div class="sect2" title="6.8.2. Példák"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3624"></a>6.8.2. 
+      
+               <a name="Examples13"></a>Példák</h3></div></div></div><p>A Nyers-er&#337; támadásokat leginkább arra használják, hogy megtippeljék a jelszavakat és megkerüljék a hozzáférési ellen&#337;rzéseket. Mindemellett sok olyan eszköz van, amik ezt a technológiát használják, hogy a támadó részér&#337;l hasznosnak vélt információkat gy&#369;jtsenek ki bizonyos web szolgáltatások katalógusaiból. Nagyon sok esetben a támadások célpontjai a különböz&#337; formátumokban lév&#337; adatok (GET/POST) és a felhasználói Session-ID-k.</p><div class="sect3" title="6.8.2.1. Példa 1"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3631"></a>6.8.2.1. 
+      
+                  <a name="Example_14"></a>Példa 1</h4></div></div></div><p>Az els&#337; forgatókönyvben, ahol az a Nyers-er&#337; célja, hogy megtudjuk a jelszót kódolatlan formában. �gy t&#369;nik, hogy a <a class="ulink" href="http://www.openwall.com/john/" target="_top">John the Ripper</a> egy nagyon hasznos eszköz. A 10 legjobb jelszótör&#337; különböz&#337; módszerekkel, többek között Nyers-er&#337;vel dolgoznak. Ezek megtalálható az alábbi oldalon:</p><p>
+      
+                  <a class="ulink" href="http://sectools.org/crackers.html" target="_top">http://sectools.org/crackers.html</a>
+   
+               </p><p>A web szolgáltatások tesztelésére a következ&#337; eszközök állnak rendelkezésre:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>dirb&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (<a class="ulink" href="http://sourceforge.net/projects/dirb/" target="_top">http://sourceforge.net/projects/dirb/</a>)</p></li><li class="listitem"><p>WebRoot&nbsp; &nbsp; &nbsp; &nbsp; (<a class="ulink" href="http://www.cirt.dk/tools/webroot/WebRoot.txt" target="_top">http://www.cirt.dk/tools/webroot/WebRoot.txt</a>)</p></li></ol></div><p>A dirb-höz fejlettebb eszközök is tartoznak. A segítségével képesek lehetünk:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>cooky-kat beállítani</p></li><li class="listitem"><p>bármilyen HTTP fejlécet hozzáadni</p></li><li class="listitem"><p>PROXY-t használni</p></li><li class="listitem"><p>megtalált objektumokat mutálni</p></li><li class="listitem"><p>http(s) kapcsolatokat tesztelni</p></li><li class="listitem"><p>katalógusokban és fájlokban keresni meghatározott könyvtárak és sémák segítségével</p></li><li class="listitem"><p>és még ezeknél sokkal többre is</p></li></ol></div><p>A legegyszer&#369;bben elvégezhet&#337; teszt a következ&#337;:</p><pre class="programlisting">
+   rezos@dojo ~/d/owasp_tools/dirb $ ./dirb http://testsite.test/
+   -----------------
+   DIRB v1.9
+   By The Dark Raver
+   -----------------
+   START_TIME: Mon Jul &nbsp;9 23:13:16 2007
+   URL_BASE: http://testsite.test/
+   WORDLIST_FILES: wordlists/common.txt
+   SERVER_BANNER: lighttpd/1.4.15
+   NOT_EXISTANT_CODE: 404 [NOT FOUND]
+   (Location: '' - Size: 345)
+   
+   -----------------
+
+   Generating Wordlist...
+   Generated Words: 839
+   
+   ---- Scanning URL: http://testsite.test/ ----
+   FOUND: http://testsite.test/phpmyadmin/
+   &nbsp; &nbsp; &nbsp; &nbsp;(***) DIRECTORY (*)
+               </pre><p>Az adatkivitelnél a támadó értesül róla, hogy a phpmyadmin/ katalógus megtalálásra került. A támadó, aki tudja ezt, most már végrehajthatja a támadást ezen az alkalmazáson. A dirb sémái között &#8211; többek között &#8211; van olyan könyvtár, ami érvénytelen httpd konfigurációkról tartalmaz információt. Ez a könyvtár fölfedezi az ilyesfajta gyengeségeket.</p><p>Az egyik a f&#337; probléma a dirb-höz hasonló eszközökkel a felismerés, hogyha a szervert&#337;l kapott válasz mindig megbízható. A fejlettebb szerver konfigurációk segítségével (mint amilyen a mod_rewrite) az automatizált eszközök nem tudják eldönteni, hogy a szerver válasza hibát jelez vagy pedig az eszköz megtalálta a támadó által keresett fájlt.</p><p>A CIRT.DK által írt <a class="ulink" href="http://www.cirt.dk/tools/webroot/WebRoot.txt" target="_top">WebRoot.pl</a> alkalmazás beépített szerver mechanizmusokat tartalmaz arra, hogy kielemezze a szerver válaszait és a támadó által megadott frázis alapján megmondja, hogy a szerveren van-e azt tartalmazó fájl.</p><p>Például:</p><pre class="programlisting">
+   Np.
+   ./WebRoot.pl -noupdate -host testsite.test -port 80 -verbose -match "test" -url "/private/&lt;BRUTE&gt;" -incremental lowercase -minimum 1 -maximum 1
+
+   oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00
+   o &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Webserver Bruteforcing 1.8 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;o
+   0 &nbsp;*************&nbsp;!!! WARNING&nbsp;!!! ************ &nbsp;0
+   0 &nbsp;******* FOR PENETRATION USE ONLY ********* &nbsp;0
+   0 &nbsp;****************************************** &nbsp;0
+   o &nbsp; &nbsp; &nbsp; (c)2007 by Dennis Rand - CIRT.DK &nbsp; &nbsp; &nbsp; o
+   oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00
+   [X] Checking for updates &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;- NO CHECK
+   [X] Checking for False Positive Scan &nbsp; &nbsp;- OK
+   [X] Using Incremental &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - OK
+   [X] Starting Scan &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - OK
+   &nbsp; &nbsp;GET /private/b HTTP/1.1
+   &nbsp; &nbsp;GET /private/z HTTP/1.1
+   [X] Scan complete &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - OK
+   [X] Total attempts &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;- 26
+   [X] Sucessfull attempts &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - 1
+   oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00oo00
+               </pre><p>A WebRoot.pl egy fájlt talált, a "/private/b"-t, a testsite.test-en, ami tartalmazza a &#8222;test&#8221; frázist.</p><p>Egy másik példa arra, hogy megvizsgáljuk a változó értékeinek tartományát:</p><p>./WebRoot.pl -noupdate -host testsite.test -port 80 -verbose -diff "Error" -url "/index.php?id=&lt;BRUTE&gt;" -incremental integer -minimum 1 -maximum 1</p></div><div class="sect3" title="6.8.2.2. Védelmi eszközök"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3708"></a>6.8.2.2. 
+      
+                  <a name="__RefHeading__17898_1902038280"></a>
+      
+                  <a name="_Toc291181670"></a>Védelmi eszközök</h4></div></div></div><p>&#8222;Php Nyers-er&#337;-támadás érzékel&#337;&#8221; (Php-Brute-Force-Attack Detector)</p><p>
+      
+                  <a class="ulink" href="http://yehg.net/lab/pr0js/files.php/php_brute_force_detect.zip" target="_top">http://yehg.net/lab/pr0js/files.php/php_brute_force_detect.zip</a>
+   
+               </p><p>Felismeri, hogy a web szervert vizsgálja-e valamilyen Nyer-er&#337;t használó eszköz, mint amilyen a Wfuzz vagy az OWASP DirBuster, illetve vizsgálják-e sebezhet&#337;ség érzékel&#337;k, mint a Nessus, a &nbsp;Nikto, az Acunetix, stb. Ez segít gyorsan azonosítani a próbálkozó rossz fiúkat, akik ki akarják használni a biztonsági pajzs réseit.</p><p>
+      
+                  <a class="ulink" href="http://yehg.net/lab/pr0js/tools/php-brute-force-detector-readme.pdf" target="_top">http://yehg.net/lab/pr0js/tools/php-brute-force-detector-readme.pdf</a>
+   
+               </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s07.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch06s09.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">6.7. 
+      
+            &#8222;�tkeresztezési támadás&#8221; (Path Traversal Attack)&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;6.9. 
+      
+            &#8222;Protokol Manipuláció &#8211; http Válasz Elosztás&#8221; (Protocol Manipulation - Http Response Splitting)</td></tr></table></div></body></html>

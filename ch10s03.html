@@ -1,0 +1,165 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>10.3. Adatbázis újratervezés folyamata</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch10.html" title="10. fejezet - Adatbázisok tesztelése"><link rel="prev" href="ch10s02.html" title="10.2. TDD alapú adatbázis fejlesztés"><link rel="next" href="ch10s04.html" title="10.4. Adatbázis tesztelési segédprogramok"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.3. Adatbázis újratervezés folyamata</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch10s02.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">10. fejezet - Adatbázisok tesztelése</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch10s04.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="10.3. Adatbázis újratervezés folyamata"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e5725"></a>10.3. Adatbázis újratervezés folyamata</h2></div></div></div><p>Az adatbázis újratervezés egyik fontos jellemz&#337;je, hogy az adatbázist párhuzamosan többen, több különböz&#337; alkalmazás is használhatja. Sajnos legtöbbször 
+                nem ismert az adatbázist felhasználó alkalmazások teljes köre. Ez nagy megkötöttséget jelent a fejlesztés során, hiszen ekkor nem szabad módosítani a meglév&#337; interface 
+                felületek megjelenését. A korábban meglév&#337; adatelemek és adatbázis objektumoknak  meg kell maradniuk. Ebben az esetben a fejlesztés csak olyan lehet, amely b&#337;víti és nem sz&#369;kiiti 
+                az elérhet&#337; funkciókört, azaz az alábbi elemekre vonatkozhat:
+                </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>új adatbázis objektum hozzáadása</p></li><li class="listitem"><p>adatbázis m&#369;ködési tárolási paraméterek módosítása</p></li><li class="listitem"><p>megszorítások törlése</p></li></ul></div><p>Mivel az adatbázis egy közösen használt er&#337;forrás, melynek tartalma, szerkezete az élete alatt jelen&#337;sen megváltozhat, nagyon fontos, hogy ezen jöv&#337;beli módosítási igényekre 
+                tekintettel legyünk a tervezés során. Ehhez  minél magasabb szinten meg kell valósítani az adatbázis elérés modularitását, rétegz&#337;dését.  Az adatbázis kezelés világában az alábbi eszközöket
+                lehet haszonnal alkalmazni a függetlenségi szint emelésére:
+                </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Nézeti táblák (VIEW) alkalmazása: A nézeti táblák olyan származtatott táblákat jelentenek, melyek más forrástáblákból építik fel tartalmukat, &#337;k maguk pedig normál 
+                    táblaként érhet&#337;k el a legtöbb m&#369;velet során. A VIEW létrehozás parancsa:
+</p><pre class="programlisting">
+   CREATE VIEW vnev AS SELECT-parancs
+</pre><p>                    
+                   A  nézeti tábla teljes mértékben azonosan viselkedik a normál táblákkal a lekérdezés esetében:
+                   </p><pre class="programlisting">
+  SELECT .. FROM vnev WHERE .. ;                       
+                   </pre><p>
+                        A módosítási parancs esetében már korlátozott a hasonlóság. A VIEW-ra kiadott  DML parancs csak akkor fog végrehajtódni, ha a VIEW adatelemei egyértelm&#369;en visszavezethet&#337;k
+                        a forrástábla adatokra. A VIEW használat el&#337;nyei:
+                        </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>elrejti a tényleges adattáblát</p></li><li class="listitem"><p>függetlenségi szint a kliens és az adatbázis között</p></li><li class="listitem"><p>származtatott adatokat tartalmazhat.</p></li><li class="listitem"><p>védelmi funkciókat valósíthat meg</p></li></ul></div><p>
+                        A VIEW segítségével elrejthet&#337; az alapstruktúra módosulása, hiszen csak a felhasználó által használt VIEW elemek definícióját kell módosítani. 
+                    </p></li><li class="listitem"><p>Tárolt eljárások (STORED PRECEDURE) alkalmazása: A tárolt eljárás hasonlóan egy köztes réteget hoz be a felhasználó és az adatbázis mag közé. A 
+                        tárolt eljárás magjában egy procedurális egység rejlik, mely a SQL parancsok mellett vezérlési elemeket, változó kezelést és küls&#337; segédprogramokat is meghívhat. A
+                        tárolt eljárás f&#337; el&#337;nye a nagyfokú rugalmasság, hátránya, hogy körülményesebb fejleszteni és tesztelni. A tárolt eljárás létrehozatala a 
+</p><pre class="programlisting">
+    CREATE PROCEDURE pnev () AS
+       törzs
+</pre><p>                        
+                paranccsal történik. A létrehozott eljárás a kliens API-b&#337;l rendszerint egy 
+</p><pre class="programlisting">
+     CALL pnev();
+</pre><p>                
+             utasítással lehetséges.  E módszer hátránya, hogy nem normál táblaként jelenik meg, belül végez m&#369;veleteket. 
+             E korlát megszüntetése a rekordhalmazt visszaadó tárolt függvénnyel oldható meg. Ezen mechanizmus használatának lépései az Oracle példája esetén:
+             </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Az eredmény rekord szerkezetét leíró adattípus létrehozatala:
+</p><pre class="programlisting">
+  CREATE TYPE rtipus AS OBJECT (..);
+</pre><p>                                      
+                 
+                        </p></li><li class="listitem"><p>A rekordhalmaz szerkezetét leíró tábla-típus definiálása:</p><pre class="programlisting">
+  CREATE TYPE  ttipus AS TABLE OF rtipus;                     
+                 </pre><p>
+                        </p></li><li class="listitem"><p>
+                Az eredményhalmazt létrehozó tárolt függvény kódolása. Ezen függvény visszatérési érték típusa az el&#337;z&#337; lépésben definiált adattípus:
+</p><pre class="programlisting">
+  CREATE FUNCTION fnev  (paraméterek)  RETURN  ttipus IS
+      pl_sql blokk;
+</pre><p>                
+                 
+                        </p></li><li class="listitem"><p>A létrehozott függvény  tábla-szer&#369;en hívható meg, melyhez  a TABLE függvényt kell alkalmazni:
+</p><pre class="programlisting">
+   SELECT * FROM TABLE(fnev(...));
+</pre><p>                 
+                 
+                        </p></li></ol></div><p>                        
+                    
+               </p></li><li class="listitem"><p>Szinonimák (SYNONYM) alkalmazása:  A szinonima  els&#337;dleges szerepe, hogy az adott elnevezés&#369; objektumokhoz egy új alias nevet lehessen
+                        hozzárendelni.  Az új elnevezés lényege, hogy 
+                        </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>elrejti a forrás adatokat</p></li><li class="listitem"><p>elrejti a kliens el&#337;l a forrásséma változását</p></li></ul></div><p>                        
+                    
+               </p></li><li class="listitem"><p>Trigger alkalmazása: A trigger mechanizmus automatikus m&#369;velet végrehajtást tesz lehet&#337;vé. Kiváltója rendszerint egy DML m&#369;velet. A trigger létrehozás parancsa:
+</p><pre class="programlisting">
+    CREATE TRIGGER tnev AFTER | BEFORE INSERT | UPDATE | DELETE 
+    ON tabla PL-SQL blokk;
+</pre><p>                    
+                    A trigger f&#337; szerepe a függetlenségi szint biztosítása esetén abban áll, hogy az alaptáblák és a felhasználó által érintett táblák közötti adatmozgás automatizálható. 
+                    </p></li><li class="listitem"><p>Saját séma (SCHEMA)  használata: A saját séma szerepe, hogy külön sémába tegyük a tényleges alapadatokat és a felhasználó által érintett objektumokat. Ekkor 
+                    az érintett kapcsolati objektumokon végrehajtott változások felügyelt módon átvezetésre kerülnek a forrás séma objektumaiba. Ezáltal ugyan többlet költség jelenik meg a végrehajtásnál, 
+                    de nagyobb függetlenség érhet&#337; el a fejlesztésnél.</p></li></ul></div><p>
+                    Az adatbázis újratervezés általános esetben magába foglalhatja azonban a korábbi sémaelemek módosítását is. Erre akkor lehet szükség, ha kiderül, hogy a korábbi tervezési elképzelés 
+                    nem állja meg a helyét, korrekcióra van szükség. Ez lehet a tervez&#337; hibája, de lehet a követelmények változása miatti esemény is. �jratervezés esetén különös gonddal kell kezelni a 
+                    korábbi funkciók zökken&#337;mentes átvitelét az új verzióba. Az adatbázis újratervezés szokásos elemei:
+                    </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Adatbázis újratervezési stratégia kiválasztása: ezen lépésben magát az újratervezést kell megtervezni. Nem lehet hirtelen felindulásból 
+                        lényeges módosításokat keresztülvinni az adatbázisban.</p></li><li class="listitem"><p>A korábbi adatbázisséma kifuttatása: Mint korábban említettük, az adatbázisoknál nem minden adatkezel&#337; alkalmazás logikája ismert pontosan.  
+                        Nem lehet azt sem pontosan megbecsülni, milyen hatással lesz egy adott elem sémájának megváltozása az alkalmazásokra. Ezen kifutási id&#337; f&#337; jellemz&#337;je, hogy
+                        a régi séma elemei fokozatosan mennek át egymásba, esetleg mindkett&#337; együtt él.  Az átmeneti id&#337;szak egy hosszabb id&#337;szak, akár egy-két év is is eltarthat. 
+                        </p></li><li class="listitem"><p>tesztelés az újratervezés el&#337;tt: Ezen a kés&#337;bbi pontokban megadott tesztelésnek le kell fednie minden fontosabb elemet, így bevonásra kerül a
+                     
+                        </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>séma tesztelése;</p></li><li class="listitem"><p>alkalmazások adatkezelésének tesztelése;</p></li><li class="listitem"><p>adatok értékellen&#337;rzése, integritási szabályok tesztelése;</p></li><li class="listitem"><p>jogosultság ellen&#337;rzése;</p></li><li class="listitem"><p>hatékonysági követelmények ellen&#337;rzése.</p></li></ul></div><p>                            
+                        
+                  </p></li><li class="listitem"><p>séma módosítása: az elvégzett módosításokat célszer&#369; egy verzió követ&#337; rendszer hatáskörében elvégezni, hiszen el&#337;fordulhat, hogy 
+                        nem bizonyul sikeresnek a módosítás és vissza kell térni a korábbi állapotokhoz. További fontos általános követelmény, hogy a változásokat lehet&#337;leg minél kisebb egységekben 
+                        hajtsuk végre, hiszen a nagyobb méret&#369; feladatoknál nagyobb az esélye a hibázásnak is.</p></li><li class="listitem"><p>tesztelés az újratervezés alatt</p></li><li class="listitem"><p>forrásadatok átemelése: az új sémaelemekbe új adatokra van szükség. Az adatok több forrásból származhatnak: lehetnek származtatott adatok, melyek a
+                         már letárolt adatokból számítással állnak el&#337;. Illetve lehetnek küls&#337; forrásból átvett adatok. Az adatok beépítését jelent&#337;sen segítik a betölt&#337; modulok. Egy ilyen betölt&#337; 
+                        modul a Microsoft Integration Service komponense, mely heterogén adatforrásokból átvett adatokat is össze tud integrálni.</p></li><li class="listitem"><p>küls&#337; kezel&#337; programok módosítása: A séma elemek módosítása miatt módosításra szorulhatnak a küls&#337; alkalmazások is. Az új funkciók miatt 
+                        megváltoznak az adatbázisok elérési parancsai és átvett adatszerkezetei is.</p></li><li class="listitem"><p>küls&#337; kezel&#337; programok tesztelése</p></li><li class="listitem"><p>regressziós tesztek futtatása: a regressziós teszt sikeres lefutása esetén mondhatjuk el, hogy sikerült a korábbi funkciókat meg&#337;rizni és átvenni az új 
+                        adatbázis sémába. A regressziós tesztek is egy gy&#369;jteményt alkotnak, mely készlet maga is dinamikusan változik. </p></li><li class="listitem"><p>verzió váltás: A sikeres teszt futtatások után lehet homokozókból átvinni az adatbázist a produkciós változatba. Az adatbázisok migrációjára több út is kínálkozik:
+                            </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p>BACKUP és RESTORE segédprogramok</p></li><li class="listitem"><p>EXPORT és IMPORT segédprogramok</p></li><li class="listitem"><p>SQL script állományok használata</p></li></ul></div><p>
+                            
+                        
+                  </p></li></ul></div><p>
+                
+         </p><div class="sect2" title="10.3.1. Séma elemek törlése"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5883"></a>10.3.1. Séma  elemek törlése</h3></div></div></div><p>Ha az adatbázisban a változtatás célja korábban létez&#337; adatbázis elemek elvetése, akkor a módosítást több lépésen keresztül célszer&#369; végigvinni. Az egyes lépések célja, hogy
+                        minél hamarabb észrevegyük az esetleges konfliktusokat és még id&#337;ben, a nagyobb lépték&#369; módosítás el&#337;tt feloldjuk az ellentmondásokat. Az adatelemek törlésekor
+                        emiatt az alábbi lépéseket célszer&#369; végrehajtani:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Segédtábla létrehozatala az eredeti adatok meg&#337;rzésére:
+</p><pre class="programlisting">
+    CREATE TABLE seged (...);
+</pre><p>                        
+                        
+                  </p></li><li class="listitem"><p>Az adatok átemelése a segédtáblába:
+</p><pre class="programlisting">
+    INSRERT INTO seged SELECT * FROM ...;
+</pre><p>                        
+                        
+                  </p></li><li class="listitem"><p>Az érintett sémaelem törlés séma szint&#369; el&#337;készítése. Az objektum típusától függ&#337;en különböz&#337; séma átalakításokra lehet szükség. Egy tábla
+                        törlésekor például sorra kell venni az alábbi elemeket:
+                        </p><table border="0" summary="Simple list" class="simplelist"><tr><td>- rajta értelmezett VIEW-k</td></tr><tr><td>- rajta értelmezett SYNONYM-ák</td></tr><tr><td>- rajta értelmezett tárolt eljárások</td></tr><tr><td>- rajta értelmezett TRIGGER-ek</td></tr><tr><td>- oda vonatkozó hivatkozási megkötések</td></tr></table><p>
+                            
+                            Ezen objektumokat mind módosítani vagy törölni kell, miel&#337;tt a hivatkozott objektumot módosítanánk. </p></li><li class="listitem"><p>Az érintett objektum törlése. Az objektum törlése esetén a törlés egyes esetekben több lépésben valósulhat meg. Az Oracle rendszer esetében
+                        például egy mez&#337; törlésekor lehet&#337;ség van logikai törlésre és fizikai törlésre. A logikai törlés esetében a DBMS csak használaton kívül helyezi a mez&#337;t, 
+                        a m&#369;velet parancsa 
+</p><pre class="programlisting">
+    ALTER TABLE tabla SET UNUSED mez&#337;;
+</pre><p>                        
+                            A fizikai törlés esetében ténylegesen megsz&#369;nik a kijelölt mez&#337;, az ide vonatkozó SQL parancs Oracle esetében:
+</p><pre class="programlisting">
+    ALTER TABLE tabla DROP COLUMN mez&#337;;
+</pre><p>                            
+                        
+                  </p></li></ul></div><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>A módosítás tesztelése. A hivatkozó és már módosított elemek (VIEW, TRIGGER, PROCEDURE,FOREIGN KEY..) m&#369;ködésének ellen&#337;rzése.</p></li></ul></div></div><div class="sect2" title="10.3.2. �j sémaelem felvitele"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5929"></a>10.3.2. �j sémaelem felvitele</h3></div></div></div><p>A séma b&#337;vítéskor is szükség van a hivatkozó objektumok sorra vételére, hiszen el&#337;fordulhat, hogy a hivatkozó objektum nem használja ki a 
+                    mez&#337;szint&#369; függetlenség adta lehet&#337;ségeket. Míg például egy
+</p><pre class="programlisting">
+    SELECT m1,m2,.. FROM ..
+</pre><p>                   
+                      alakú lekérdezés eredménye nem változik, ha új mez&#337;t adunk a sémához, addig a
+</p><pre class="programlisting">
+    SELECT * FROM ..
+</pre><p>                   
+                    alakban kiadott m&#369;veletnél b&#337;vül a visszaadott mez&#337;k köre, tehát fel kell készülni annak fogadására. Ilyenkor az új mez&#337; neve konfliktusba kerülhet a 
+                    kliens programokban használt változó nevekkel. Ezen ütközéseket kell ellen&#337;rizni.                   
+                    </p><p>Ha számított mez&#337;ket hozunk be a sémába, akkor annak megvalósítására több lehet&#337;ség is kínálkozik:
+                    </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Egyes DBMS rendszerek közvetlenül is támogatják a számított mez&#337; adattípus. Az MS SQL Server esetében az alábbi módon hozható létre 
+                        származtatott mez&#337;:
+</p><pre class="programlisting">
+  create table proba (a integer, b integer, c as a + b);
+  insert into proba values (1,3);
+  select * from proba; 
+</pre><p>
+                            A mintában a C mez&#337; lesz számított mez&#337;, itt az adattípus helyén a származtatási parancs szerepel a tábla definícióban. Adatok felvitelekor nem lehet ezen mez&#337;knek 
+                            értéket adni, de lekérdezéskor ott szerepel a mez&#337; értéke.
+                        </p></li><li class="listitem"><p>Ha a DBMS nem támogatja a számított mez&#337;t közvetlenül, akkor a TRIGGER mechanizmus alkalmazható. Ilyenkor a mez&#337;t mint 
+                        normál mez&#337;t hozzuk létre és a triggert a tábla DML m&#369;veleteihez kötjük. A trigger feladata, hogy a többi mez&#337; módosulása esetén frissítse a kijelölt 
+                        számított mez&#337; tartalmát. </p></li></ul></div><p>
+                        
+                    
+            </p></div><div class="sect2" title="10.3.3. Védelmi tesztek"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5953"></a>10.3.3. Védelmi tesztek</h3></div></div></div><p>Az adatbázisban tárolt adatok védelmének biztosítása is az egyik alapvet&#337; adatbázis feladatok közé tartozik. Az relációs adatbáziskez&#337;k  egyik jellemz&#337;je, hogy  SQL parancsok 
+                        alakjában kapja meg a végrehajtandó parancsot. Mivel az SQL nyelv teljes parancskészletet tartalmaz és egy sztringben több parancs is jöhet, a nem megfelel&#337; SQL szöveg
+                        károkat okozhat. Emiatt igen fontos, hogy az elküldött szöveg pontosan megfeleljen az elvárt alaknak. Ha nem megfelel&#337; az ellen&#337;rzés, akkor kárt okozó parancsok 
+                        kerülhetnek végrehajtásra. Ezt a veszélytípust nevezik  SQL Injection támadásnak. 
+                    </p><p>Az SQL Ijnjection esetében a kliens oldalon bevitt SQL alak olyan parancselemeket is tartalmaz, melyek nem kívánt hatással járnak. Ezt úgy érik el, hogy a 
+                    felhasználótól kapott érték úgy tér el az elvárt alaktól, hogy egy veszélyt okozó parancsot vagy parancs részletet is magába foglal. Példaként vegyünk egy egyszer&#369; nyilvántarrtó
+                    rendszert, ahol a felhasználótól lekérdezzük a keresett áru nevét. Ehhez a GUI tartalmaz egy anev mez&#337;t. A mez&#337;be bevitt értéket egy SQL parancsban adjuk át, mint kulcsértéket:</p><pre class="programlisting">
+   parancs = "SELECT * FROM termekek WHERE nev = '" 
+   + anev.text +"'  ";
+</pre><p>Ha a felhasználó az elvárt normál azonosító név helyett egy </p><pre class="programlisting">
+   baba'  or   'a'='a'
+</pre><p>értéket visz fel, akkor az elküldött parancssor a </p><pre class="programlisting">
+   SELECT * FROM termekek WHERE nev = 'baba' or 'a'='a';   
+</pre><p>lesz, amely minden terméket vissza fog adni. Még súlyosabb kár éri a rendszert, ha a bevitt parancs </p><pre class="programlisting">
+    baba' ; delete from termekek where  'a'='a'
+</pre><p>alakú, hiszen ekkor két egymást követ&#337; parancs kerül a szerver oldalon végrehajtásra, melyek alakjai</p><pre class="programlisting">
+     SELECT * FROM termekek WHERE nev = 'baba';
+     DELETE FROM termékek WHERE 'a'='a';
+</pre><p>A fenti támadások ellen a beolvasott paraméterek alaposabb ellen&#337;rzésével illetve a parancsok kétfázisú végrehajtásával lehet védekezni. </p><p>A védelmi tesztek esetében is több szinten futhat az ellen&#337;rzés. A FirtsTechnologies ajánlása alapján az alábbi tesztek  kerülnek végrehajtásra:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Küls&#337;, alkalmazás szint&#369; tesztelés (például az SQL Injection támadás ellen&#337;rzése)</p></li><li class="listitem"><p>Adatbázis audit: a beépített védelmi politika ellen&#337;rzése, jogosultsági politika  tesztelése</p></li><li class="listitem"><p>Adatbázis behatolás teszt, különböz&#337; segédeszközök révén kisérletek az adatbázis adatok elérésére</p></li><li class="listitem"><p>OS szint&#369; audit, az operációs rendszer fel&#337;li védelmi elemek ellen&#337;rzése</p></li><li class="listitem"><p>Adatfolyam elemzés: a szerver és a kliensek közötti adatfolyam ellen&#337;rzése</p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch10s02.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch10.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch10s04.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">10.2. TDD alapú adatbázis fejlesztés&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;10.4. Adatbázis tesztelési segédprogramok</td></tr></table></div></body></html>

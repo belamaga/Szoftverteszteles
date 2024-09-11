@@ -1,0 +1,247 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>4.3. Specifikáció alapú technikák</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch04.html" title="4. fejezet - Teszt tervezési technikák"><link rel="prev" href="ch04s02.html" title="4.2. A teszt tervezési technikák fajtái"><link rel="next" href="ch04s04.html" title="4.4. Struktúra alapú technikák"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.3. 
+      
+            Specifikáció alapú technikák</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s02.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">4. fejezet - Teszt tervezési technikák</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch04s04.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="4.3. Specifikáció alapú technikák"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e1823"></a>4.3. 
+      
+            <a name="_Toc291171719"></a>Specifikáció alapú technikák</h2></div></div></div><p>Ezek a technikák a tesztelés alapjaként a rendszer specifikációját, esetleg formális modelljét tekintik. Amennyiben a specifikáció jól definiált és megfelel&#337;en strukturált, ennek elemzése során könnyen azonosíthatjuk a tesztelés alanyait (test conditions), amelyekb&#337;l pedig származtathatjuk a teszteseteket.</p><p>A specifikáció soha nem azt rögzíti, hogy hogyan kell a rendszernek megvalósítania az elvárt viselkedést (ennek meghatározása a tervezés feladata), csak magát a viselkedést definiálja. A specifikáció és a tervezés a fejlesztés folyamatában is külön fázist képviselnek, és gyakran a fejleszt&#337; csoporton belül nem is ugyanazok a részvev&#337;k végzik. A specifikációs fázis legtöbbször megel&#337;zi a tervezési fázist. Ez lehet&#337;vé teszi a munkafolyamatok párhuzamosítását: a specifikáció alapján a tesztmérnökök kidolgozhatják a teszteseteket miközben a rendszer tervezése és implementálása folyik. Ha az implementáció elkészül, a már kész tesztesetek futtatásával lehet ellen&#337;rizni.</p><p>A tevékenységek ilyen párhuzamosítása a fejlesztés átfutási idejének rövidítésén túl a specifikáció ellen&#337;rzésére is alkalmas. Ha ugyanis egy, a m&#369;köd&#337; program ismerete nélkül, csak a specifikáció elemzése alapján megtervezetett teszteset hibát mutat ki, annak két oka lehet</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>a tervezés vagy az implementáció során a fejleszt&#337;k által elkövetett hiba,</p></li><li class="listitem"><p>ugyanazt a követelményt a teszt mérnök és a tervez&#337; másként értelmezte &#8211; ez a specifikáció hibája.</p></li></ol></div><p>Nem minden fejlesztési projekt alapul pontosan definiált specifikáción. Ebben az esetben a specifikáció alapú tesztesetek megtervezése, illetve a tervezéshez szükséges információk megszerzése párhuzamosan, egymástól elkülönítve történhet, ami többlet er&#337;források felhasználását, és a félreértések esélyének növekedését jelenti.</p><p>Van azonban olyan eset is, amikor a formális specifikáció hiánya nem jelenti a tesztelési tevékenység megnehezítését. Az agilis fejlesztési szemlélet ugyanis nem követeli meg formális specifikáció elkészítését. Ez a megközelítés azonban éppen a tesz tervezés fontosságát emeli ki: a specifikáció szerepét a tesztesetek veszik át: a fejlesztés során el&#337;ször egy funkcióhoz tartozó teszteseteket kell megtervezni. Az implementációs fázis befejezését az jelenti, ha az összes (el&#337;re megtervezett) teszteset hiba kimutatása nélkül fut le.</p><p>A tesztelési technikák ismertetése során többször fogunk hivatkozni az alábbi &#8222;specifikációkra&#8221;:</p><p>S1: Készítsünk programot, amely beolvas egy egész számot, és kiírja, hogy az negatív, pozitív, vagy nulla-e.</p><p>S2: Készítsünk programot, amely beolvas három egész számot, amelyek egy háromszög oldalhosszait reprezentálják. A feladat annak megállapítása, hogy a bemeneti adatok általános, egyenl&#337;szárú vagy egyenl&#337; oldalú háromszöget alkotnak-e.</p><p>A tesztelési folyamat nehézségére utal, hogy ennek a nagyon egyszer&#369; specifikációnak megfelel&#337; programnak a korrekt ellen&#337;rzésére is számos teszt esetet kell definiálnunk.</p><p>A továbbiakban áttekintjük a legismertebb specifikáció alapú tesztelési technikákat.</p><div class="sect2" title="4.3.1. Ekvivalencia particionálás (Equivalence partitioning)"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1855"></a>4.3.1. 
+      
+               <a name="_Toc291171720"></a>Ekvivalencia particionálás (Equivalence partitioning)</h3></div></div></div><p>Ennek a technikának az alapja az a megfigyelés, hogy vannak olyan különböz&#337; input értékek, amelyekre a programnak ugyanúgy kell viselkednie. </p><p>Ekvivalencia osztálynak nevezzük az input értékek olyan halmazát, amelyre ugyanúgy kell viselkednie a programnak. Ez azt jelenti, hogy egy ekvivalencia osztályhoz elég egy teszt esetet megtervezni és lefuttatni, mert az osztályhoz tartozó lehetséges tesztesetek</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>ugyanazt a hibát fedhetik fel,</p></li><li class="listitem"><p>ha egy teszteset nem fed fel egy hibát, azt az osztályhoz tartozó más tesztesetek sem fogják felfedni.</p></li></ol></div><p>Az ekvivalencia osztályok meghatározása jelent&#337;sen csökkentheti a szükséges tesztesetek számát. Az S1 specifikációnak megfelel&#337; program kimerít&#337; tesztelése esetén a tesztesetek száma az ábrázolható egész számok számával azonos. Nyilvánvalóan azonban a tesztesetek száma háromra korlátozható, mert feltételezhet&#337;, hogy ha a program az 1 bemenetre a &#8222;pozitív&#8221; választ adja, akkor 23458-re is azt fogja adni.</p><p>Az ekvivalencia osztályok meghatározása heurisztikus folyamat. Meghatározásuk során meg kell keresnünk az érvényes és az érvénytelen bemenetek osztályát is.</p><p>Az S1 specifikáció matematikai értelmezése szerint nem lehetnének érvénytelen bemenetek, hiszen minden egész szám besorolható a specifikáció szerinti kategóriák valamelyikébe. Egy számítógépes program azonban nem képes az egész számok teljes halmazát leképezni, így meg kell vizsgálni azt az esetet, hogy ha az input olyan egész számot tartalmaz, ami az ábrázolási tartományok kívülre esik.</p><p>Az ekvivalencia osztályok átfedhetik egymást. Ennek felismerése tovább csökkentheti a szükséges tesztesetek számát, hiszen a közös részhalmazból választott teszteset az átfedett osztályok mindegyikére érvényes. </p><p>Az S2 specifikációra ekvivalencia osztályok lesznek például</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>három olyan pozitív szám, ami általános háromszöget alkot (érvényes ekvivalencia osztály)</p></li><li class="listitem"><p>Az egyik szám negatív (nem érvényes ekvivalencia osztály)</p></li><li class="listitem"><p>stb.</p></li></ol></div><p></p></div><div class="sect2" title="4.3.2. Határérték analízis (Boundary value analysis)"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1892"></a>4.3.2. 
+      
+               <a name="_Toc291171721"></a>Határérték analízis (Boundary value analysis)</h3></div></div></div><p>Ennek a technikának az alapja az a megfigyelés, hogy a határértékek kezelésénél könnyebben követnek el hibát a programozók, mint az &#8222;általános&#8221; eseteknél.</p><p>Célszer&#369; tehát az ekvivalencia osztályok határértékeit külön megvizsgálni.</p><p>Az S2 specifikáció esetén ilyen határértékek például:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>két szám összege egyenl&#337; a harmadikkal</p></li><li class="listitem"><p>mindhárom szám 0</p></li></ol></div><p>Figyelni kell a kimeneti ekvivalencia osztályok határértékeit is. Ehhez persze sokszor "visszafelé" kell gondolkodni, tehát meg kell határozni azon input értékek halmazát, amelyek határértékként kezelhet&#337; kimeneteket produkálnak.</p><p>Tipikus probléma a konténer típusú adatszerkezetek elemszáma, vagy a sorszámozott típusú adatszerkezetek "végei"!</p><p>Példaként vegyük egy program modult, amelynek feladata egy minta megkeresése egy sorozatban. A határérték analízis során megtalálható tesztesetek:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>0 hosszúságú sorozat</p></li><li class="listitem"><p>1 hosszúságú sorozat, a minta nincs benne / a minta benne van </p></li><li class="listitem"><p>&gt;1 hosszúságú sorozat, a minta az els&#337; / utolsó helyen van</p></li><li class="listitem"><p>2 hosszúságú sorozat (nincs benne / els&#337; /utolsó)</p></li><li class="listitem"><p>nagyon nagy elemszámú sorozat</p></li></ol></div><p></p></div><div class="sect2" title="4.3.3. Ok-hatás analízis (Cause-effect analysis)"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1933"></a>4.3.3. 
+      
+               <a name="_Toc291171722"></a>Ok-hatás analízis (Cause-effect analysis)</h3></div></div></div><p>Ez a technikai egy döntési táblát épít fel, amelynek az oszlopai adják meg a definiálandó teszteseteket, ezért döntési tábla (decision table) technikának is nevezik.</p><p>A módszer alapgondolata az, hogy a specifikáció gyakran olyan formában írja le a rendszer által megvalósítandó üzleti folyamatokat, hogy az egyes tevékenységeknek milyen bemeneti feltételei vannak. Az el&#337;z&#337; két módszer nem vizsgálja a bementi feltételek kombinációit.</p><p>A bemeneti feltétel (ok) lehet például:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>egy input adat valamilyen értékére vonatkozó el&#337;írás,</p></li><li class="listitem"><p>input adatok egy ekvivalencia osztálya,</p></li><li class="listitem"><p>valamilyen felhasználói akció vagy egyéb esemény bekövetkezése stb.</p></li></ol></div><p>A kimeneti feltétel (hatás) megmondja, hogy az okok egy kombinációjára a rendszernek milyen állapotot kell elérnie.</p><p>A bementi és kimenti feltételekhez logikai érték rendelhet&#337;. (Teljesül-e: igen-nem). Ez a megközelítés a rendszert egy logikai hálózatnak tekinti, ahol a lehetséges bemenetekhez a specifikáció által megadott szükséges kimeneteket rendeljük hozzá. Ennek a logikai hálózatnak az igazságtáblája egy döntési táblázatban ábrázolható. A táblázat soraiban az okokat és a hatásokat soroljuk fel, a cellákban pedig azok logikai értéke található. A táblázat minden egyes oszlopa egy megvalósítandó teszt esetet definiál.</p><p>Lássunk erre egy egyszer&#369; példát:</p><p>Egy áruház pontgy&#369;jt&#337; kártyát bocsát ki. Minden vásárló, akinek van ilyen kártyája, minden vásárlása során dönthet, hogy 5% kedvezményt kér a számla összegéb&#337;l, vagy a kártyán lév&#337; pontjait növeli meg. Az a vásárló, akinek nincs ilyen kártyája, szintén megkaphatja az 5% kedvezményt, ha 50.000 Ft felett vásárol.</p><p>A bemeneti feltételek (okok) ebben az esetben:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Van-e pont pontgy&#369;jt&#337; kártya?</p></li><li class="listitem"><p>Kéri-e a kártyatulajdonos a kedvezményt?</p></li><li class="listitem"><p>50.000 Ft felett van-e a vásárlás összege?</p></li></ol></div><p>A kimeneti feltételek (hatások):</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Nincs kedvezmény</p></li><li class="listitem"><p>Kedvezmény jóváírása</p></li><li class="listitem"><p>Pontok jóváírása</p></li></ol></div><p>A döntési tábla:</p><div class="informaltable"><table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col><col><col><col><col><col></colgroup><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>T1</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>T2</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>T3</p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p>T4</p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>Okok:</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>O1</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>Van-e pontgy&#369;jt&#337; kártya?</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>O2</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>Kéri-e a kártyatulajdonos a kedvezményt?</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>-</p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p>-</p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>O3</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>50.000 Ft felett van-e a vásárlás összege?</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>-</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>-</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>Hatások:</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p></p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H1</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>Nincs kedvezmény</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H2</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>Kedvezmény jóváírása</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-bottom: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td></tr><tr><td style="border-right: 0.5pt solid ; ">
+               
+                           <p>H3</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; ">
+               
+                           <p>Pontok jóváírása</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; ">
+               
+                           <p>I</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="border-right: 0.5pt solid ; ">
+               
+                           <p>H</p>
+            
+                        </td><td style="">
+               
+                           <p>H</p>
+            
+                        </td></tr></tbody></table></div><p></p><p>A táblázatban az Igaz &#8211; Hamis logikai értékek mellett megjelenik a &#8211; jel is, amelynek kétféle jelentése lehet:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>a bemeneti feltételt a többi feltétel adott állapota kizárja (mint az O2 sorban),</p></li><li class="listitem"><p>a kimeneti feltétel a többi feltétel adott állapota mellett független a bemeneti feltétel állapotától (mint az O3 sorban).</p></li></ol></div><p>Ez a jelölés (amely egyfajta háromérték&#369; logikát használ) csökkenti az oszlopok (és ezzel a szükséges tesztesetek) számát.</p><p>Ha a döntési táblát egy logikai hálózat igazságtáblázatának tekintjük, a bementi feltételek összes lehetséges kombinációit tartalmaznia kellene. Ezek száma, tehát a döntési tábla oszlopainak a száma igen nagy lehet. A teszt tervezés számára hasznos döntési táblában az oszlopos számát csökkentheti:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>a példában is alkalmazott &#8222;háromérték&#369; logika&#8221; használata,</p></li><li class="listitem"><p>az a tény, hogy a specifikáció szerint egyes bemeneti feltételek egymást kizárhatják,</p></li><li class="listitem"><p>nem minden lehetséges bemeneti feltétel kombinációhoz tartozik hatás.</p></li></ol></div><p>A teljes döntési táblától megkülönböztetve az így kapott táblázatot sz&#369;kített döntési táblázatnak (limited entry decision table) nevezzük.</p><p>A specifikációból el&#337;állított döntési tábla, amellett hogy jól áttekinthet&#337; kiindulópontja lehet a tesztesetek tervezésének, &#8222;mellékhatásként&#8221; alkalmas a specifikáció konzisztenciájának és teljességének az ellen&#337;rzésére is, ezáltal a specifikáció tesztelésének is eszköze. A specifikáció hiányosságaira utalhat például az, hogy táblázatban tudunk olyan oszlopot el&#337;állítani, amelyben a bemeneti feltételeknek egy, a valóságban el&#337;fordulható kombinációja található, de nem tartozik hozzá a specifikációban hatás. (Hiányos specifikáció.)</p><p>A döntési tábla el&#337;állításának van egy formális módszere, amely f&#337;leg nagy méret&#369; táblázatok esetén lehet hasznos. Ehhez ismét abból kell kiindulni, hogy a rendszert egy logikai hálózatként tekinthetjük, ahol a bementi feltételek, a döntésekhez szükséges közbens&#337; feltételek és a kimenetet jelent&#337; hatások a hálózat elemei. Az ilyen hálózatokat az úgynevezett bool gráffal ábrázolhatjuk. A bool gráf jellemz&#337;i:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Csomópontjai a 0 vagy 1 (igaz/hamis) értékeket vehetik fel.</p></li><li class="listitem"><p>Az irányított élek logikai m&#369;veleteket jelentenek</p></li><li class="listitem"><p>Egy csomópont értékét a befutó élek kiindulási csomópontjainak értéke, és a csomóponthoz rendelt m&#369;velet határozza meg.</p></li><li class="listitem"><p>A gráfban minden ok és minden hatás egy csomópontként jelenik meg, ezek között lehetnek közbens&#337; állapotok.</p></li><li class="listitem"><p>Az okokban megfelel&#337; csomópontokhoz csak kiinduló élek tartoznak.</p></li><li class="listitem"><p>&nbsp;A hatásoknak megfelel&#337; csomópontokból nem indulhatnak ki élek.</p></li></ol></div><p>A bool gráf alapelemeinek egy lehetséges jelölésmódja:</p><p></p><p>
+      
+               <img src="images/kep9.png">
+   
+            </p><p>4. ábra A bool gráf jelölésrendszere</p><p></p><p>A gráfot a specifikációból építjük fel, az alábbiak szerint:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>ok: egy bemeneti feltétel vagy egy bemeneti ekvivalencia osztály</p></li><li class="listitem"><p>hatás: a kimeneti feltétel</p></li><li class="listitem"><p>minden ok és hatás egy számot kap</p></li><li class="listitem"><p>a tartalmat elemezve építjük fel a gráfot</p></li><li class="listitem"><p>feljegyezzük azokat a feltételeket, amelyeket nem tudtunk a gráffal ábrázolni.</p></li></ol></div><p>A gráfból el&#337;állítjuk annak igazságtáblázatát, az alábbiak szerint</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>A cellákban 0 vagy 1 szerepel</p></li><li class="listitem"><p>A sorok az okok és a hatások</p></li><li class="listitem"><p>Az oszlopok számát az adja meg, hogy hány lehetséges bemeneti kombináció tudja el&#337;idézni legalább egy kimenet 1 értékét.</p></li><li class="listitem"><p>Az oszlopok számát csökkentheti, ha a hatásokra kirótt korlátozásokat figyelembe vesszük.</p></li><li class="listitem"><p>A hatásokból kiindulva ("visszafelé") töltjük ki a táblázatot.</p></li></ol></div><p>Az igazságtáblából a tesztesetek levezetése (azaz a sz&#369;kített döntési tábla el&#337;állítás) az alábbi lépésekb&#337;l áll:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Kitöröljük azokat az oszlopokat, amelyek ütköznek az okokra feljegyzett korlátozásokkal</p></li><li class="listitem"><p>A maradék oszlopok egy-egy tesztesetnek felelnek meg, ahol</p></li></ol></div><p></p></div><div class="sect2" title="4.3.4. Véletlenszer&#369; adatok generálása"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2363"></a>4.3.4. 
+      
+               <a name="_Toc291171723"></a>Véletlenszer&#369; adatok generálása</h3></div></div></div><p>Ez a technika azon alapul, hogy automatikusan, véletlenszer&#369;en állítunk el&#337; bemeneti adatokat, és ezekkel futtatjuk a tesztelend&#337; modult. Bár ennek a módszernek a hibafeltáró képessége is véletlenszer&#369;nek t&#369;nik, számos szempont szól az alkalmazása mellett:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Kis er&#337;forrás igény.</p></li><li class="listitem"><p>Viszonylag könnyen automatizálható.</p></li><li class="listitem"><p>Nagytömeg&#369; adattal tesztelhet&#337; a modul/rendszer.</p></li><li class="listitem"><p>A "vak tyúk is talál szemet" elv alapján esetleg olyan hibára is fényt deríthet, amelyre a determinisztikus tesztek tervezése során nem gondoltunk.</p></li><li class="listitem"><p>Ez a módszer használható "monkey test"-ként, amellyel a próbálkozó felhasználó viselkedéséhez hasonló hatást érhetünk el.</p></li><li class="listitem"><p>Terhelési tesztre is alkalmas lehet.</p></li></ol></div><p>A véletlenszer&#369; adatok generálása mindig egy adott tartományba es&#337; (általában egyenletes eloszlású) számok el&#337;állítását jelentik. A tartomány lehet az adott adat érvényességi tartomány, vagy éppen azon kívüli (ebben az esetben a rendszernek a hibás bemenetekre adott válaszát tesztelhetjük).</p><p>Terhelési tesztként használva gyakran lehet becslésünk arról, hogy a bemenetei adatok az éles használat esetén milyen eloszlást követnek, ilyenkor az egyenletes eloszlás helyett a becsült eloszlásnak megfelel&#337; adatokat generálhatunk.</p><p>A véletlenszer&#369; teszt generálás esetén sajátos problémaként jelenik meg a kimenetek ellen&#337;rzése. Mivel ez automatizálást feltételez&#337; módszer, az elvárt kimentek el&#337;állítása és azoknak a teszt eredményekkel való összehasonlítása is automatizáltan kell történjen. Ez a probléma a többi technika esetén is felmerül, ezért erre a kés&#337;bbiekben még visszatérünk.</p><p>Ennél a módszernél azonban az is felmerülhet, hogy nem is vizsgáljuk a kimenetek helyességét, ehelyett a rendszer viselkedésére helyezzük a hangsúlyt, és csak arról akarunk meggy&#337;z&#337;dni, hogy a folyamatos m&#369;ködés során nem lépnek fel váratlan események.</p><p></p></div><div class="sect2" title="4.3.5. Használati eset (use case) tesztelés"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2398"></a>4.3.5. 
+      
+               <a name="_Toc291171724"></a>Használati eset (use case) tesztelés</h3></div></div></div><p>A mai fejlesztési projektekben a specifikáció gyakran használt eszköze a használati eset (use case) modell felépítése. Ilyen esetekben a teszt tervezés vezérfonalát a használati eset modell elemei alkotják, s&#337;t, a teszteseteket is leírhatjuk használati esetekkel.</p><p>Ebben az esetben a használati esetek és a tesztesetek összerendelése hasznos eszköz lehet annak eldöntésére, ellen&#337;rzésére, hogy hol tartunk a tesztelési folyamatban. Ezt legegyszer&#369;bben egy teszt lefedettségi mátrixszal ábrázolhatjuk, amit az alábbi ábra mutat:</p><p></p><p>
+         
+               <img src="images/kep10.png">
+      
+            </p><p></p><p>A szürkített cellák azt mutatják, hogy melyik teszteset melyik használati eset funkcióinak tesztelésére szolgál. A teszt lefedettségi mátrix segíthet a tesz futtatások ütemezésében, és ellen&#337;rizhet&#337; segítségével, hogy minden használati esethez tartozik-e legalább egy teszt eset.</p></div><div class="sect2" title="4.3.6. Az elvárt eredmény el&#337;állításának problémája"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2415"></a>4.3.6. 
+      
+               <a name="_Toc291171725"></a>Az elvárt eredmény el&#337;állításának problémája</h3></div></div></div><p>Az el&#337;z&#337;ekben mindig feltételeztük, hogy az elvárt eredmény, amit a teszt futás kimenetével össze tudunk hasonlítani rendelkezésünkre áll.</p><p>Ez azonban a gyakorlatban nem mindig ilyen egyszer&#369;, mert az ellen&#337;rzend&#337; modul m&#369;ködése lehet nagyon bonyolult, sok számítási lépést igényl&#337; folyamat, amit manuálisan nem tudunk elvégezni. A probléma lehetséges megoldásai:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>A valós feladatnál sokkal kisebb méret&#369; feladatot adunk teszt esetként, amit kézzel is végig lehet számolni.</p></li><li class="listitem"><p>Ugyanazt a problémát más programmal is megoldatjuk, és annak az eredményét használjuk fel a teszt kimenetének ellen&#337;rzésére.</p></li><li class="listitem"><p>Szimulációs szoftvert használunk.</p></li><li class="listitem"><p>Bár a kimenetet számszer&#369;en nem tudjuk ellen&#337;rizni, de tudjuk, hogy az eredménynek bizonyos szerkezeti sajátosságokat kell mutatnia.</p></li></ol></div><p>Példaként említhetünk egy olyan projektet, amelyben jelen fejezet szerz&#337;jének egy geofizikai modellez&#337; rendszer programjának elkészítése volt a feladata. A matematikai modell egyik része egy több százezer ismeretlenes lineáris egyenletrendszer együttható mátrixának a felépítését és az egyenletrendszer megoldását igényelte. Nyilvánvaló, hogy ennek a modulnak a kimenetét nem lehet úgy ellen&#337;rizni, hogy kézzel kiszámítjuk az eredményt. A tesztelés ezért több lépcs&#337;ben történt:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>El&#337;ször egy er&#337;sen redukált elemszámú (tíz körüli ismeretlent tartalmazó) feladatot oldattunk meg, amelynek természetesen fizikai realitása nincs, de az eredményét manuálisan is lehet ellen&#337;rizni. A &#8222;manuális ellen&#337;rzés&#8221; persze már ebben az esetben is jelentheti segédprogramok igénybevételét.</p></li><li class="listitem"><p>A következ&#337; lépcs&#337; az együtthatómátrix valós értékei helyett olyan speciális értékek beállítását jelentette, amellyel az egyenletrendszer megoldásának helyességét könny&#369; tesztelni. (Például ha az együttható mátrix az egységmátrix, akkor a megoldás vektornak azonosnak kell lennie a jobboldal vektorával.)</p></li><li class="listitem"><p>Rendelkezésre állt olyan, korábban kifejlesztett és letesztelt program, amely az adott fizikai probléma speciális, egyszer&#369;sített eseteit tudta kezelni. Ugyanezt a problémát a tesztelend&#337; programmal is megoldva, az eredmények összehasonlíthatók voltak.</p></li><li class="listitem"><p>Lehetett olyan input adatokat generálni, amelyekhez tartozó eredménynek a fizika törvényei szerinti meghatározott sajátosságokat kellett mutatnia: szimmetriát, megadott peremfeltételekkel való egyezést stb. Ezekben az esetekben az kimenet egyes elemeinek a numerikus helyességét nem lehetett ellen&#337;rizni, csak a törvényekkel való egyez&#337;séget.</p></li></ol></div><p></p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s02.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch04s04.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">4.2. 
+      
+            A teszt tervezési technikák fajtái&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;4.4. 
+      
+            Struktúra alapú technikák</td></tr></table></div></body></html>

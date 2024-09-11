@@ -1,0 +1,69 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>10.4. Adatbázis tesztelési segédprogramok</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Szoftvertesztelés"><link rel="up" href="ch10.html" title="10. fejezet - Adatbázisok tesztelése"><link rel="prev" href="ch10s03.html" title="10.3. Adatbázis újratervezés folyamata"><link rel="next" href="ch10s05.html" title="10.5. Kérdések"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.4. Adatbázis tesztelési segédprogramok</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch10s03.html">El&#337;z&#337;</a>&nbsp;</td><th width="60%" align="center">10. fejezet - Adatbázisok tesztelése</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch10s05.html">Következ&#337;</a></td></tr></table><hr></div><div class="sect1" title="10.4. Adatbázis tesztelési segédprogramok"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e5998"></a>10.4. Adatbázis tesztelési segédprogramok</h2></div></div></div><div class="sect2" title="10.4.1. DBUnit tesztkörnyezet használata"><div class="titlepage"><div><div><h3 class="title"><a name="d0e6001"></a>10.4.1. DBUnit tesztkörnyezet használata</h3></div></div></div><p>A DBUnit rendszer az elterjedt JUnit tesztrendszerre épül&#337; adatbázis m&#369;veletek tesztelésére alkalmas ingyenes  keretrendszer. A DBUnit 
+                    rendszer a tesztelésben els&#337;dlegesen arra használható, hogy segítségével az adatbázist, annak tartalmát egy megadott állapotba hozzuk. Ezáltal 
+                    biztosítható, hogy a tesztek konzisztensen futathatók, gyorsan és egyszer&#369;en rekonstruálhatók a teszthez szükséges környezetek.
+                    Az igényelt adatbázis  tartalmat egy XML állományban lehet megadni, ahol több tesztállapotot  is nyilván lehet tartani.  A teszt indítása el&#337;tt a DBUnittal
+                    betölthet&#337; az igényelt állapot az adatbázisba. A DBUnit  rendszer el&#337;nyei a következ&#337; pontokban foglalhatók össze:
+                </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>A tesztekhez igényelt  adatbázis tartalom hatékony kezelése</p></li><li class="listitem"><p>Támogatás az adatbázis tartalom XML állományba történ&#337; kimentéséhez illetve az XML állományból történ&#337; visszatöltésére</p></li><li class="listitem"><p>Lehet&#337;séget ad a letárolt adattartalmakban történ&#337; keresésre,  az különböz&#337; adatbázis állapotok összehasonlítására</p></li></ul></div><p>
+                    A DBUnit keretrendszer használata, a tesztelés során az alábbi lépéseket kell megtenni:
+                    </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Adatbázis állapotot tartalmazó XML állomány el&#337;készítése</p></li><li class="listitem"><p>Adatbázis aktuális állapotának kitörlése</p></li><li class="listitem"><p>A lementett állapotokból a kiválasztott  állapot betöltése XML-b&#337;l az adatbázisba.</p></li><li class="listitem"><p>Tesztek futattása</p></li><li class="listitem"><p>Tesztek kiértékelése</p></li></ol></div><p>
+                    
+                    Az XML-ben tárolt adatok betöltését a keretrendszer által tartalmazott  DatabaseTestCase osztályon keresztül, annak setUp() metódusával végezhetjük el.                     
+                </p><p>
+    A következ&#337;kben egy mintát mutatunk be a DBUnit használatára. Az els&#337; lépés az adatokat leíró XML állomány  (pl. input.xml) el&#337;állítása.  Az XML állomány szerkezete az adatbázis  
+szerkezetét tükrözi. Az XML a konkrét adatmez&#337; tartalmakat is tárolja amint az alábbi példa is mutatja
+    
+    </p><pre class="programlisting">
+    
+    &lt;?xml version='1.0' encoding='UTF-8'?&gt;
+    &lt;dataset&gt;
+        &lt;login id="1" empcode="E005" loginname="chandan" 
+              password="chandan" loginenabled="y"/&gt;
+        &lt;login id="2" empcode="E006" loginname="deepak" 
+              password="deepak" loginenabled="n"/&gt;
+        &lt;/dataset&gt;
+    
+    </pre><p>
+    A következ&#337; lépésben a keretrendszer getConnection metódusán keresztül kapcsolatot építünk ki a céladatbázishoz:
+    </p><pre class="programlisting">
+        
+    // Provide a connection to the database
+     
+    protected IDatabaseConnection getConnection() throws Exception{
+       Class driverClass = Class.forName("com.mysql.jdbc.Driver");
+       Connection jdbcConnection = 
+         DriverManager.getConnection("jdbc:mysql://localhost:
+         3306/hrapptest", "root", "root");
+       return new DatabaseConnection(jdbcConnection);
+    }
+    </pre><p>
+    Az XML-ben tárolt adatokat betöltjük az adatbázisba:
+    </p><pre class="programlisting">
+    // Load the data which will be inserted for the test
+     
+     protected IDataSet getDataSet() throws Exception{
+       loadedDataSet = 
+         new FlatXmlDataSet(this.getClass().getClassLoader().
+           getResourceAsStream("input.xml"));
+       return loadedDataSet;
+    }
+    </pre><p>
+    Ezt követ&#337;en elindíthatók a betöltött tartalomhoz kapcsolódó adatbázis tesztek.     
+    
+</p></div><div class="sect2" title="10.4.2. TestComplete rendszer"><div class="titlepage"><div><div><h3 class="title"><a name="d0e6046"></a>10.4.2. TestComplete rendszer</h3></div></div></div><p>A TestComplete keretrendszer egy összetett tesztkörnyezetet biztosít az adatbázis teszteléshez. A fizet&#337;s termék több különböz&#337; tesztfeladatot is támogat</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Funkcionális teszt: Az alkalmazások GUI felületén keresztül célja annak ellen&#337;rzése, hogy a kért funkciók valóban jól m&#369;ködnek-e. A teszt támogatására a TestComplete 
+                    rendszer lehet&#337;séget ad a felhasználói kezel&#337; parancsok (egér, billenty&#369;zet) feljegyzésére és kés&#337;bbi visszajátszására. A lejegyzett  tevékenységek kés&#337;bb közvetlenül is szerkeszthet&#337;k 
+                    és b&#337;víthet&#337;k.  A tesztekhez ellen&#337;rzési pontok köthet&#337;k, ahol a kijelölt objektumok értéke összehasonlítható a bázisként kijelölt értékekkel.</p><div class="figure"><a name="d0e6055"></a><p class="title"><b>10.3. ábra - Felhasználói GUI tevékenységek naplózása</b></p><div class="figure-contents"><div class="mediaobject" align="center"><img src="https://gyires.inf.unideb.hu/KMITT/c12/images\ss_functest_kteditor.gif" align="middle" alt="Felhasználói GUI tevékenységek naplózása"></div></div></div><br class="figure-break"></li><li class="listitem"><p>Parancsorientált teszt: Ezen  teszt típus arra szolgál, hogy a felépítsük a felhasználó által elvégzend&#337; kezelési tevékenységek m&#369;veletsorát. A tevékenység
+                        kijelölése történhet grafikusan, egy eszközlistából választva a tevékenység elemet; illetve használhatunk egy script nyelvet is. A tesztekhez ellen&#337;rzési pontok köthet&#337;k, ahol a kijelölt 
+                        objektumok értéke összehasonlítható a bázisként kijelölt értékekkel.</p></li><li class="listitem"><p>Egység teszt: Az egyes osztályok tesztelését  szolgáló modul  </p></li><li class="listitem"><p>Regressziós teszt: A modul a regressziós tesztek menedzselést, azok ütemezését végzi. A keretrendszer lehet&#337;séget ad az egyes tesztek eredményének naplózására
+                    és az eredményeknek a bázisadatokkal történ&#337; összehasonlítására.
+                    </p></li><li class="listitem"><p>Terhelés teszt: A keretrendszer egy kifinomult, hangolható környezetet biztosít a terhelési tesztek elvégzésére. A tesztekhez szimulálható a terhelés mértéke és jellege.
+                    Többek között beállítható a szimulált kliensek eloszlása, a m&#369;ködési paraméterük, a hálózati kapcsolataik jellege, sebessége. A tesztadatok naplózásán keresztül elemezhet&#337; a
+                    rendszer terhelési karakterisztikája.
+                     
+                    </p></li><li class="listitem"><p>Adat-orientált tesz: A keretrendszer lehet&#337;séget ad a teszthez szükséges bemen&#337; adatok hatékony generálására. Egyrészt biztosít egy vléletlen tesztadatsort
+                    generáló mechanizmust, másrészt  rugalmas bemen&#337; adatsor-forrás kijel&#337; mechanizmusa is van. </p></li></ul></div></div><div class="sect2" title="10.4.3. DTM DB Stress rendszer"><div class="titlepage"><div><div><h3 class="title"><a name="d0e6076"></a>10.4.3. DTM DB Stress rendszer</h3></div></div></div><p>A DBSterss keretrendszer célja az adatbázis terhelési tesztek elvégzéésnek és kiértékelésének a támogatása. A teszt végrehajtás lépései a következ&#337; pontokból állnak:
+                   </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>Adatforrás kijelölése: az elterjedt adatbázis csatolók használatával az adtforrásokszéles köre elérhet&#337;</p></li><li class="listitem"><p>�j üres teszt létrehozása</p></li><li class="listitem"><p>a végrehajtandó SQL parancsok kijelölése</p></li><li class="listitem"><p>a végrehajtás paramétereinek megadása (pl. ismétlésszám, szálak darabszáma)</p></li><li class="listitem"><p>a tesztek futtatása: A futtatásnál több végrehajtási mód is elérhet&#337;. A támogatott üzemmódok: soros, párhuzamos és kötegekbe rendezett végrehajtás. </p></li><li class="listitem"><p>eredmények értékelése: a keretrendszer több teljesítmény paraméter is támogat, grafikus és táblázatos megjelenítést szolgáltat a futtatási adatokról. A 
+                       mért paraméterek külön jegyzik az egyes végrehajtási lépések költségeit, mint például a kapcsolat kiépítés ideje vagy parancs el&#337;készítés ideje. </p></li></ul></div><p>
+                        A rendszer külön modulokat biztosít a tesztadatok el&#337;állításra is.
+                    </p><div class="figure"><a name="d0e6101"></a><p class="title"><b>10.4. ábra - A DTM DBStress keretrendszer GUI elemei</b></p><div class="figure-contents"><div class="mediaobject" align="center"><img src="https://gyires.inf.unideb.hu/KMITT/c12/images\dtm_db_stress-157812-scr.gif" align="middle" alt="A DTM DBStress keretrendszer GUI elemei"></div></div></div><br class="figure-break"></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch10s03.html">El&#337;z&#337;</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch10.html">Fel</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch10s05.html">Következ&#337;</a></td></tr><tr><td width="40%" align="left" valign="top">10.3. Adatbázis újratervezés folyamata&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Tartalom</a></td><td width="40%" align="right" valign="top">&nbsp;10.5. Kérdések</td></tr></table></div></body></html>
