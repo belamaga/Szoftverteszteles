@@ -1,7 +1,8 @@
 # Használt parancsok
 
-find /home/anon/Projects/Downloaded/gyires.inf.unideb.hu/KMITT/c12/ -name '*.html' -exec sed -i "s@ISO-8859-1@utf-8@g" {} +
-wget -r -np -k --no-check-certificate --content-disposition "https://gyires.inf.unideb.hu/KMITT/c12/index.html"
+`find /home/anon/Projects/Downloaded/gyires.inf.unideb.hu/KMITT/c12/ -name '*.html' -exec sed -i "s@ISO-8859-1@utf-8@g" {} +`
+
+`wget -r -np -k --no-check-certificate --content-disposition "https://gyires.inf.unideb.hu/KMITT/c12/index.html"`
 
 
 -------
